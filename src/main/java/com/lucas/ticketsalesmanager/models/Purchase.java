@@ -2,6 +2,7 @@ package com.lucas.ticketsalesmanager.models;
 
 import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
 import com.lucas.ticketsalesmanager.service.communication.PurchaseConfirmation;
+import jakarta.mail.MessagingException;
 
 
 public class Purchase {
@@ -72,7 +73,7 @@ public class Purchase {
     }
 
     // Methods
-    public boolean processPurchase(User user, Ticket ticket, Payment paymentMethod) {
+    public boolean processPurchase(User user, Ticket ticket, Payment paymentMethod) throws MessagingException {
         boolean paymentStatus = paymentMethod.pay(Float.toString(ticket.getPrice()));
         if (paymentStatus) {
             PurchaseConfirmation.sendEmail(user, toString());

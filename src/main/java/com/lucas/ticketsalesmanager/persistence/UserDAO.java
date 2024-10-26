@@ -1,43 +1,92 @@
 package com.lucas.ticketsalesmanager.persistence;
 
 import com.google.gson.reflect.TypeToken;
+import com.lucas.ticketsalesmanager.models.User;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lucas.ticketsalesmanager.models.User;
-
-
 public class UserDAO {
-    public static void main(String[] args) {
-        // Defines the file path where users will be saved
-        String filePath = "users.json";
+    private static final String FILE_PATH = "users.json";
+    private static final Type userListType = new TypeToken<List<User>>(){}.getType();
+    private final DataAccessObject<User> userDao;
 
-        // Defines the type of user list
-        Type userListType = new TypeToken<List<User>>(){}.getType();
+    public UserDAO() {
+        this.userDao = new DataAccessObject<>(FILE_PATH, userListType);
+    }
 
-        // Creates an instance of the DataAccessObject for users
-        DataAccessObject<User> userDao = new DataAccessObject<>(filePath, userListType);
-
-        // Create some users to test
-        List<User> users = new ArrayList<>();
-        users.add(new User("johndoe", "password123", "John Doe", "12345678901", "john@example.com", false));
-        users.add(new User("janedoe", "password456", "Jane Doe", "10987654321", "jane@example.com", true));
-
-        // Save users to file
+    // Add a new user
+    public void addUser(User user) {
+        List<User> users = userDao.readData();
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+        users.add(user);
         userDao.writeData(users);
-        System.out.println("Successfully saved users!");
+    }
 
-        // Read users from file
-        List<User> loadedUsers = userDao.readData();
-        if (loadedUsers != null) {
-            System.out.println("Uploaded users:");
-            for (User user : loadedUsers) {
-                System.out.println(user);
+    // List all users
+    public List<User> getAllUsers() {
+        List<User> users = userDao.readData();
+        return users != null ? users : new ArrayList<>();
+    }
+
+    // Find user by login
+    public User findUserByLogin(String login) {
+        List<User> users = userDao.readData();
+        if (users != null) {
+            for (User user : users) {
+                if (user.getLogin().equals(login)) {
+                    return user;
+                }
             }
-        } else {
-            System.out.println("No users found or error loading.");
+        }
+        return null;
+    }
+    // Update an existing user's information
+    public void updateUser(User updatedUser, String infoToUpdate, String newInfo) {
+        List<User> users = userDao.readData();
+        if (users != null) {
+            for (int i = 0; i < users.size(); i++) {
+                User user = users.get(i);
+                if (user.getLogin().equals(updatedUser.getLogin())) {
+                    // Check which information needs to be updated
+                    switch (infoToUpdate.toLowerCase()) {
+                        case "login":
+                            user.setLogin(newInfo);
+                            break;
+                        case "password":
+                            user.setPassword(newInfo);
+                            break;
+                        case "name":
+                            user.setName(newInfo);
+                            break;
+                        case "cpf":
+                            user.setCpf(newInfo);
+                            break;
+                        case "email":
+                            user.setEmail(newInfo);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Tipo de informação inválido: " + infoToUpdate);
+                    }
+                    users.set(i, user);
+                    userDao.writeData(users);
+                    return;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Usuário não encontrado: " + updatedUser.getLogin());
+    }
+
+
+    // Remove a user
+    public void removeUser(String login) {
+        List<User> users = userDao.readData();
+        if (users != null) {
+            users.removeIf(user -> user.getLogin().equals(login));
+            userDao.writeData(users);
         }
     }
 }

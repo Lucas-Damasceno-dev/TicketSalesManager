@@ -2,6 +2,9 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import com.lucas.ticketsalesmanager.exception.EventNotFoundException;
+import com.lucas.ticketsalesmanager.exception.PurchaseException;
+import com.lucas.ticketsalesmanager.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import com.lucas.ticketsalesmanager.controllers.Controller;
@@ -15,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ControllerTest {
 
     @Test
-    public void testRegisterEventByAdmin() {
+    public void testRegisterEventByAdmin() throws UserNotFoundException {
         Controller controller = new Controller();
         User admin = controller.registerUser("admin", "password123", "Admin User",
                 "00000000000", "admin@example.com", true);
@@ -50,7 +53,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testBuyTickets() {
+    public void testBuyTickets() throws UserNotFoundException, EventNotFoundException, PurchaseException {
         Controller controller = new Controller();
         User usuario = new User("johndoe", "password123", "John Doe", "12345678901",
                 "john.doe@example.com", false);
@@ -73,7 +76,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCancelPurchase() {
+    public void testCancelPurchase() throws EventNotFoundException, UserNotFoundException, PurchaseException {
         Controller controller = new Controller();
         User usuario = new User("johndoe", "password123", "John Doe", "12345678901",
                 "john.doe@example.com", false);
@@ -95,7 +98,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testListAvailableEvents() {
+    public void testListAvailableEvents() throws UserNotFoundException {
         Controller controller = new Controller();
         User admin = controller.registerUser("admin", "password123", "Admin User",
                 "00000000000", "admin@example.com", true);
@@ -117,7 +120,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testListPurchasedTickets() {
+    public void testListPurchasedTickets() throws UserNotFoundException, EventNotFoundException, PurchaseException {
         Controller controller = new Controller();
         User usuario = new User("johndoe", "password123", "John Doe", "12345678901",
                 "john.doe@example.com", false);
