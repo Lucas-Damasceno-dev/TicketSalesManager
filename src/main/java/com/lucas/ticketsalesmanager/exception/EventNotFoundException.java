@@ -2,7 +2,7 @@ package com.lucas.ticketsalesmanager.exception;
 
 public class EventNotFoundException extends TicketSalesManagerException {
     public EventNotFoundException(String eventId) {
-        super("Evento não encontrado.", "Evento com ID: " + eventId + " não encontrado no sistema.");
+        super("Event not found.", "Event with ID: " + eventId + " not found in the system.");
     }
 }
 

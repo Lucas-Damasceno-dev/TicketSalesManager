@@ -4,7 +4,7 @@ public class TicketSalesManagerException extends Exception {
     private final String userMessage;
 
     public TicketSalesManagerException(String userMessage, String logMessage) {
-        super(logMessage); // The log message will be passed to Exception
+        super(logMessage);
         this.userMessage = userMessage;
     }
 

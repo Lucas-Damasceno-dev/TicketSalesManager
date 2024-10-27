@@ -4,6 +4,9 @@ import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
 import com.lucas.ticketsalesmanager.service.communication.PurchaseConfirmation;
 import jakarta.mail.MessagingException;
 
+import java.util.Date;
+import java.util.Objects;
+
 
 public class Purchase {
     // Attributes
@@ -11,6 +14,7 @@ public class Purchase {
     private Ticket ticket;
     private Payment paymentMethod;
     private PurchaseConfirmation confirmation;
+    private Date date;
 
     // Constructor
     public Purchase(User user, Ticket ticket, Payment paymentMethod) {
@@ -18,6 +22,7 @@ public class Purchase {
         this.ticket = ticket;
         this.paymentMethod = paymentMethod;
         this.confirmation = new PurchaseConfirmation();
+        this.date = new Date();
     }
 
     // Getters and Setters
@@ -45,14 +50,19 @@ public class Purchase {
         this.paymentMethod = paymentMethod;
     }
 
+    public Date getPurchaseDate() {
+        return date;
+    }
+
     // Overridden Methods
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Purchase purchase = (Purchase) o;
-        return user.equals(purchase.user) && ticket.equals(purchase.ticket) && paymentMethod.equals(purchase.paymentMethod);
+        return Objects.equals(user, purchase.user) && Objects.equals(ticket, purchase.ticket) && Objects.equals(paymentMethod, purchase.paymentMethod) && Objects.equals(confirmation, purchase.confirmation) && Objects.equals(date, purchase.date);
     }
 
     @Override
@@ -68,7 +78,9 @@ public class Purchase {
         return "Purchase{" +
                 "user=" + user +
                 ", ticket=" + ticket +
-                ", payment method=" + paymentMethod +
+                ", paymentMethod=" + paymentMethod +
+                ", confirmation=" + confirmation +
+                ", date=" + date +
                 '}';
     }
 

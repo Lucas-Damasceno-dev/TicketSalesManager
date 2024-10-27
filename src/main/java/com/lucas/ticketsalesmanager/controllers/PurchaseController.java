@@ -4,17 +4,18 @@ import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.models.Ticket;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.exception.*;
+import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
+import jakarta.mail.MessagingException;
 
 import java.util.Date;
 import java.util.List;
 
-public class Controller {
-
+public class PurchaseController {
     private final UserController userController;
     private final EventController eventController;
     private final TicketController ticketController;
 
-    public Controller() {
+    public PurchaseController() {
         this.userController = new UserController();
         this.eventController = new EventController();
         this.ticketController = new TicketController();
@@ -28,21 +29,25 @@ public class Controller {
         return userController.updateUser(user, infoToUpdate, newInfo);
     }
 
-    public Event registerEvent(User user, String name, String description, Date date) throws UserNotFoundException, SecurityException {
-        return eventController.registerEvent(user, name, description, date);
+    public boolean registerEvent(User user, String name, String description, Date date) throws UserNotFoundException, SecurityException {
+        if (user.isAdmin()) {
+            Event event = new Event(name, description, date);
+            return eventController.registerEvent(event);
+        }
+        return false;
     }
 
     public void addEventSeat(String eventName, String seat) throws EventNotFoundException {
         eventController.addEventSeat(eventName, seat);
     }
 
-    public Ticket purchaseTicket(User user, String eventName, String seat) throws PurchaseException, EventNotFoundException {
+    public Ticket purchaseTicket(User user, String eventName, String seat, float price, Payment paymentMethod) throws PurchaseException, EventNotFoundException, MessagingException {
         Event event = eventController.getEventByName(eventName);
-        return ticketController.purchaseTicket(user, event, seat);
+        return ticketController.purchaseTicket(user, event, price, seat, paymentMethod);
     }
 
     public boolean cancelPurchase(User user, Ticket ticket) {
-        return ticketController.cancelPurchase(user, ticket);
+        return ticketController.cancelTicket(user, ticket);
     }
 
     public List<Event> listAvailableEvents() {

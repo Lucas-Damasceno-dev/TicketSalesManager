@@ -4,8 +4,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.lucas.ticketsalesmanager.models.Event;
@@ -22,39 +20,55 @@ public class TicketDAO {
     }
 
     // Add a new ticket
-    public void addTicket(Ticket ticket) {
+    public boolean addTicket(Ticket ticket) {
         List<Ticket> tickets = ticketDao.readData();
         if (tickets == null) {
             tickets = new ArrayList<>();
         }
         tickets.add(ticket);
         ticketDao.writeData(tickets);
-    }/*
-   // Create some events to associate with tickets
-    Calendar calendar = Calendar.getInstance();
-    calendar.set(2024, Calendar.SEPTEMBER, 10);
-    Date date = calendar.getTime();
+        return true;
+    }
 
-    Event event1 = new Event("Rock show", "Band XYZ", date);
-    Event event2 = new Event("Concert", "Bach", date);
+    // List all tickets
+    public List<Ticket> listTickets() {
+        List<Ticket> tickets = ticketDao.readData();
+        return tickets != null? tickets : new ArrayList<>();
+    }
 
-    // Create tome tickets to test
-    List<Ticket> tickets = new ArrayList<>();
-    tickets.add(new Ticket(event1, 50.0f, "A1"));
-    tickets.add(new Ticket(event2, 30.0f, "B2"));
-
-    // Save tickets to file
-    ticketDao.writeData(tickets);
-    System.out.println("Tickets saved successfully!");
-
-    // Read tickets from the archive
-    List<Ticket> loadedTickets = ticketDao.readData();
-    if (loadedTickets != null) {
-        System.out.println("Uploaded tickets:");
-        for (Ticket ticket : loadedTickets) {
-            System.out.println(ticket);
+    // Find ticket by event and seat
+    public Ticket findTicketByEventAndSeat(Event event, String seat) {
+        List<Ticket> tickets = ticketDao.readData();
+        if (tickets != null) {
+            for (Ticket ticket : tickets) {
+                if (ticket.getEvent().equals(event) && ticket.getSeat().equals(seat)) {
+                    return ticket;
+                }
+            }
         }
-    } else {
-        System.out.println("No tickets found or error loading.");
-    }*/
+        return null;
+    }
+
+    // Cancel a ticket
+    public boolean cancelTicket(Ticket ticket) {
+        List<Ticket> tickets = ticketDao.readData();
+        if (tickets!= null && tickets.contains(ticket)) {
+            tickets.remove(ticket);
+            ticket.cancel();
+            ticketDao.writeData(tickets);
+            return true;
+        }
+        return false;
+    }
+
+    // Reactivate a canceled ticket
+    public boolean reactivateTicket(Ticket ticket) {
+        List<Ticket> tickets = ticketDao.readData();
+        if (tickets!= null && tickets.contains(ticket)) {
+            ticket.reactivate();
+            ticketDao.writeData(tickets);
+            return true;
+        }
+        return false;
+    }
 }

@@ -11,34 +11,97 @@ import com.lucas.ticketsalesmanager.models.Event;
 
 
 public class EventDAO {
-    public static void main(String[] args) {
-        // Define the file path where events will be saved
-        String filePath = "events.json";
+    private static final String FILE_PATH = "events.json";
+    private static final Type eventListType = new TypeToken<List<Event>>(){}.getType();
+    private final DataAccessObject<Event> eventDao;
 
-        // Define the type for the list of events
-        Type eventListType = new TypeToken<List<Event>>(){}.getType();
+    public EventDAO() {
+        this.eventDao = new DataAccessObject<>(FILE_PATH, eventListType);
+    }
 
-        // Create an instance of DataAccessObject for events
-        DataAccessObject<Event> eventDao = new DataAccessObject<>(filePath, eventListType);
-
-        // Create some events for testing
-        List<Event> events = new ArrayList<>();
-        events.add(new Event("Concert", "A great musical concert", new Date(System.currentTimeMillis() + 86400000))); // Event in 1 day
-        events.add(new Event("Theater Play", "An amazing theater play", new Date(System.currentTimeMillis() + 172800000))); // Event in 2 days
-
-        // Save the events to the file
-        eventDao.writeData(events);
-        System.out.println("Events saved successfully!");
-
-        // Read the events from the file
-        List<Event> loadedEvents = eventDao.readData();
-        if (loadedEvents != null) {
-            System.out.println("Loaded events:");
-            for (Event event : loadedEvents) {
-                System.out.println(event);
-            }
-        } else {
-            System.out.println("No events found or error loading.");
+    // Add a new event
+    public boolean addEvent(Event event) {
+        List<Event> events = eventDao.readData();
+        if (events == null) {
+            events = new ArrayList<>();
         }
+        events.add(event);
+        eventDao.writeData(events);
+        return true;
+    }
+
+    // List all events
+    public List<Event> listEvents() {
+        List<Event> events = eventDao.readData();
+        return events!= null? events : new ArrayList<>();
+    }
+
+    // Find event by name
+    public Event findEventByName(String name) {
+        List<Event> events = eventDao.readData();
+        if (events != null) {
+            for (Event event : events) {
+                if (event.getName().equals(name)) {
+                    return event;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Update event information
+    public boolean updateEvent(Event event) {
+        List<Event> events = eventDao.readData();
+        if (events!= null) {
+            for (int i = 0; i < events.size(); i++) {
+                if (events.get(i).getName().equals(event.getName())) {
+                    events.set(i, event);
+                    eventDao.writeData(events);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Delete event by name
+    public boolean deleteEvent(String name) {
+        List<Event> events = eventDao.readData();
+        if (events!= null) {
+            for (int i = 0; i < events.size(); i++) {
+                if (events.get(i).getName().equals(name)) {
+                    events.remove(i);
+                    eventDao.writeData(events);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Find event by date
+    public Event findEventByDate(Date date) {
+        List<Event> events = eventDao.readData();
+        if (events!= null) {
+            for (Event event : events) {
+                if (event.getDate().equals(date)) {
+                    return event;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Find event by description
+    public Event findEventByDescription(String description) {
+        List<Event> events = eventDao.readData();
+        if (events!= null) {
+            for (Event event : events) {
+                if (event.getDescription().equals(description)) {
+                    return event;
+                }
+            }
+        }
+        return null;
     }
 }

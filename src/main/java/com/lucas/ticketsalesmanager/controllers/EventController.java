@@ -4,6 +4,7 @@ import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.exception.EventNotFoundException;
 import com.lucas.ticketsalesmanager.exception.UserNotFoundException;
+import com.lucas.ticketsalesmanager.persistence.EventDAO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,30 +12,40 @@ import java.util.List;
 
 public class EventController {
 
-    private final ArrayList<Event> events;
+    private final EventDAO eventDAO;
 
     public EventController() {
-        this.events = new ArrayList<>();
+        this.eventDAO = new EventDAO();
     }
 
-    public Event registerEvent(User user, String name, String description, Date date) throws UserNotFoundException, SecurityException {
-        if (user == null) {
-            throw new UserNotFoundException("null");
+    // Register event using eventDAO
+    public boolean registerEvent(Event event) {
+        return eventDAO.addEvent(event);
+    }
+
+    // make a methods for seat in event using eventDAO
+    public boolean addEventSeat(String eventName, String seat) throws EventNotFoundException {
+        Event event = getEventByName(eventName);
+        event.addSeat(seat);
+        return eventDAO.updateEvent(event);
+    }
+
+    // make a method for list all events available using eventDAO.listEvents
+    public List<Event> listEvents() {
+        return eventDAO.listEvents();
+    }
+
+    // make a method for find a event available using eventDAO.findEventByName
+    public Event getEventByName(String eventName) throws EventNotFoundException {
+        Event event = eventDAO.findEventByName(eventName);
+        if (event == null) {
+            throw new EventNotFoundException(eventName);
         }
-        if (!user.isAdmin()) {
-            throw new SecurityException("Only administrators can register events.");
-        }
-        Event event = new Event(name, description, date);
-        events.add(event);
         return event;
     }
 
-    public void addEventSeat(String eventName, String seat) throws EventNotFoundException {
-        Event event = getEventByName(eventName);
-        event.addSeat(seat);
-    }
-
     public List<Event> listAvailableEvents() {
+        List<Event> events = eventDAO.listEvents();
         List<Event> availableEvents = new ArrayList<>();
         for (Event event : events) {
             if (event.isActive()) {
@@ -42,14 +53,5 @@ public class EventController {
             }
         }
         return availableEvents;
-    }
-
-    public Event getEventByName(String eventName) throws EventNotFoundException {
-        for (Event event : events) {
-            if (event.getName().equalsIgnoreCase(eventName)) {
-                return event;
-            }
-        }
-        throw new EventNotFoundException(eventName);
     }
 }

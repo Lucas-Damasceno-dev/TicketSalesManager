@@ -1,28 +1,37 @@
 package com.lucas.ticketsalesmanager.controllers;
 
 import com.lucas.ticketsalesmanager.models.Event;
+import com.lucas.ticketsalesmanager.models.Purchase;
 import com.lucas.ticketsalesmanager.models.Ticket;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.exception.PurchaseException;
+import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
+import com.lucas.ticketsalesmanager.persistence.TicketDAO;
+import jakarta.mail.MessagingException;
 
 public class TicketController {
-    public Ticket purchaseTicket(User user, Event event, String seat) throws PurchaseException {
-        if (event == null || !event.getAvailableSeats().contains(seat)) {
-            throw new PurchaseException("Seat " + seat + " is unavailable.");
-        }
-        Ticket ticket = new Ticket(event, 100.0F, seat);
-        event.removeSeat(seat);
-        user.getTickets().add(ticket);
-        return ticket;
+    private final TicketDAO ticketDAO;
+
+    public TicketController() {
+        this.ticketDAO = new TicketDAO();
     }
 
-    public boolean cancelPurchase(User user, Ticket ticket) {
-        if (user.getTickets().contains(ticket)) {
-            user.getTickets().remove(ticket);
-            ticket.cancel();
-            ticket.getEvent().addSeat(ticket.getSeat());
-            return true;
+    // Purchase a ticket using (TicketDAO and Purchase) class
+    public Ticket purchaseTicket(User user, Event event, float price, String seat, Payment paymentMethod) throws PurchaseException, MessagingException {
+        Ticket ticket = new Ticket(event, price, seat);
+        Purchase purchase = new Purchase(user, ticket, paymentMethod);
+        if (ticketDAO.addTicket(ticket) && purchase.processPurchase(user, ticket, paymentMethod)) {
+            return ticket;
         }
-        return false;
+        throw new PurchaseException("Failed to purchase ticket.");
     }
+
+
+   // Cancel a ticket using (TicketDAO and Purchase) class
+   public boolean cancelTicket(User user, Ticket ticket) {
+       if (!user.isAdmin() || !user.getTickets().contains(ticket)) {
+           return false;
+       }
+       return ticketDAO.cancelTicket(ticket);
+   }
 }
