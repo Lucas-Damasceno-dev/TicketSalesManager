@@ -1,16 +1,13 @@
 package com.lucas.ticketsalesmanager.models.paymentMethod;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class Card extends Payment {
-    // Atributos
     private String numberCard;
     private String cvv;
     private Date expDate;
     private boolean isCreditCard;
 
-    // Construct
     public Card(String numberCard, String cvv, Date expDate, boolean isCreditCard) {
         this.numberCard = numberCard;
         this.cvv = cvv;
@@ -18,7 +15,7 @@ public class Card extends Payment {
         this.isCreditCard = isCreditCard;
     }
 
-    // Getters and setters
+    // Getters e Setters
     public String getNumberCard() {
         return numberCard;
     }
@@ -51,35 +48,15 @@ public class Card extends Payment {
         isCreditCard = creditCard;
     }
 
-    // Methods overloadind
+    // Methods overriding
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Card card = (Card) o;
-        return isCreditCard == card.isCreditCard && Objects.equals(numberCard, card.numberCard) && Objects.equals(cvv, card.cvv) && Objects.equals(expDate, card.expDate);
+    public boolean validate(String paymentDetails) {
+        return paymentDetails.equals(cvv) && expDate.after(new Date());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(numberCard, cvv, expDate, isCreditCard);
-    }
-    @Override
-    public String toString() {
-        return "Card{" +
-                "numberCard='" + numberCard + '\'' +
-                ", cvv='" + cvv + '\'' +
-                ", expDate=" + expDate +
-                ", isCreditCard=" + isCreditCard +
-                '}';
-    }
-
-    // Methods
-    @Override
-    public boolean pay(String cvv) {
-        if (cvv.equals(this.cvv)) {
-            return expDate.after(new Date());
-        }
-        return false;
+    public boolean executePayment() {
+        System.out.println("Processing card payment...");
+        return true;
     }
 }

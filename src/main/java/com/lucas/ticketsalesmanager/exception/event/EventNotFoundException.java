@@ -1,4 +1,6 @@
-package com.lucas.ticketsalesmanager.exception;
+package com.lucas.ticketsalesmanager.exception.event;
+
+import com.lucas.ticketsalesmanager.exception.TicketSalesManagerException;
 
 public class EventNotFoundException extends TicketSalesManagerException {
     public EventNotFoundException(String eventId) {

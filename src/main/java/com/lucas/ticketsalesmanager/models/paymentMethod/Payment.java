@@ -14,6 +14,26 @@ public abstract class Payment {
         this.name = name;
     }
 
-    // Abstract methods
-    public abstract boolean pay(String paymentDetails);
+    public String getPaymentDetails() {
+        return paymentDetails;
+    }
+
+    public void setPaymentDetails(String paymentDetails) {
+        this.paymentDetails = paymentDetails;
+    }
+
+    // Validate the payment details, to be implemented by subclasses
+    public abstract boolean validate(String paymentDetails);
+
+    // Execute the payment, to be implemented by subclasses
+    public abstract boolean executePayment();
+
+    // Unified payment process that first validates then executes
+    public boolean processPayment(String paymentDetails) {
+        this.paymentDetails = paymentDetails;
+        if (validate(paymentDetails)) {
+            return executePayment();
+        }
+        return false;
+    }
 }

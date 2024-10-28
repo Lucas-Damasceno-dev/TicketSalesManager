@@ -1,20 +1,17 @@
 package com.lucas.ticketsalesmanager.models.paymentMethod;
 
 import com.lucas.ticketsalesmanager.models.Ticket;
-import java.util.Objects;
 
-public class PhysicalMoney {
-    // Attributes
+public class PhysicalMoney extends Payment {
     private double amount;
     private Ticket ticket;
 
-    // Constructor
     public PhysicalMoney(double amount, Ticket ticket) {
         this.amount = amount;
         this.ticket = ticket;
     }
 
-    // Getters and Setters
+    // Getters e Setters
     public double getAmount() {
         return amount;
     }
@@ -31,30 +28,20 @@ public class PhysicalMoney {
         this.ticket = ticket;
     }
 
-    // Overridden Methods
+    // Methods overriding
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PhysicalMoney that = (PhysicalMoney) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(ticket, that.ticket);
+    public boolean validate(String paymentDetails) {
+        try {
+            double providedAmount = Double.parseDouble(paymentDetails);
+            return providedAmount >= ticket.getPrice();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(amount, ticket);
-    }
-
-    @Override
-    public String toString() {
-        return "PhysicalMoney{" +
-                "amount=" + amount +
-                ", ticket=" + ticket +
-                '}';
-    }
-
-    // Methods
-    public boolean pay(double amount, Ticket ticket) {
-        return !(amount < ticket.getPrice());
+    public boolean executePayment() {
+        System.out.println("Processing cash payment...");
+        return true;
     }
 }

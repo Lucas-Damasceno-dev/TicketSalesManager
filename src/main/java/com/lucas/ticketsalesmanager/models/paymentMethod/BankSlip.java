@@ -1,13 +1,9 @@
 package com.lucas.ticketsalesmanager.models.paymentMethod;
 
-import java.util.Objects;
-
-public class BankSlip extends Payment{
-    // Atributes
+public class BankSlip extends Payment {
     private String accountNumber;
     private String agentNumber;
 
-    // Constructor
     public BankSlip(String accountNumber, String agentNumber) {
         this.accountNumber = accountNumber;
         this.agentNumber = agentNumber;
@@ -30,31 +26,15 @@ public class BankSlip extends Payment{
         this.agentNumber = agentNumber;
     }
 
-    // Methods overloading
+    // Methods overriding
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BankSlip bankSlip = (BankSlip) o;
-        return Objects.equals(accountNumber, bankSlip.accountNumber) && Objects.equals(agentNumber, bankSlip.agentNumber);
+    public boolean validate(String paymentDetails) {
+        return paymentDetails != null && paymentDetails.equals(accountNumber + "-" + agentNumber);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(accountNumber, agentNumber);
-    }
-
-    @Override
-    public String toString() {
-        return "BankSlip{" +
-                "accountNumber='" + accountNumber + '\'' +
-                ", agentNumber='" + agentNumber + '\'' +
-                '}';
-    }
-
-    // Methods
-    @Override
-    public boolean pay(String number) {
+    public boolean executePayment() {
+        System.out.println("Processing bank slip payment...");
         return true;
     }
 }

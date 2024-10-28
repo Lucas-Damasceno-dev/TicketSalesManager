@@ -25,15 +25,15 @@ public class PurchaseDAO {
     }
 
     // Add a new purchase
-    public void addPurchase(User user, Ticket ticket, Card card) throws MessagingException {
-        Purchase purchase = new Purchase(user, ticket, card);
+    public void addPurchase(User user, Ticket ticket, Payment paymentMethod) throws MessagingException {
+        Purchase purchase = new Purchase(user, ticket, paymentMethod);
         List<Purchase> purchases = purchaseDao.readData();
         if (purchases == null) {
             purchases = new ArrayList<>();
         }
         purchases.add(purchase);
         purchaseDao.writeData(purchases);
-        purchase.processPurchase(user, ticket, card);
+        purchase.processPurchase(user, ticket, paymentMethod);
     }
 
     // Cancel purchase

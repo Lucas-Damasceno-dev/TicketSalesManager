@@ -1,13 +1,14 @@
 package com.lucas.ticketsalesmanager.controllers;
 
 import com.lucas.ticketsalesmanager.models.Event;
-import com.lucas.ticketsalesmanager.models.User;
-import com.lucas.ticketsalesmanager.exception.EventNotFoundException;
-import com.lucas.ticketsalesmanager.exception.UserNotFoundException;
+import com.lucas.ticketsalesmanager.exception.event.EventNotFoundException;
+import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
+import com.lucas.ticketsalesmanager.exception.event.InvalidEventDateException;
+import com.lucas.ticketsalesmanager.exception.event.EventUpdateException;
+import com.lucas.ticketsalesmanager.exception.event.EventAlreadyExistsException;
 import com.lucas.ticketsalesmanager.persistence.EventDAO;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class EventController {
@@ -18,24 +19,37 @@ public class EventController {
         this.eventDAO = new EventDAO();
     }
 
-    // Register event using eventDAO
-    public boolean registerEvent(Event event) {
+    // Register event, throwing exception if event already exists or has invalid data
+    public boolean registerEvent(Event event) throws EventAlreadyExistsException, InvalidEventDateException {
+        if (eventDAO.findEventByName(event.getName()) != null) {
+            throw new EventAlreadyExistsException(event.getName());
+        }
+        if (!event.isActive()) {
+            String date = String.valueOf(event.getDate());
+            throw new InvalidEventDateException(date);
+        }
         return eventDAO.addEvent(event);
     }
 
-    // make a methods for seat in event using eventDAO
-    public boolean addEventSeat(String eventName, String seat) throws EventNotFoundException {
+    public boolean addEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
         Event event = getEventByName(eventName);
+        if (!event.getAvailableSeats().contains(seat)) {
+            throw new SeatUnavailableException(eventName, "Seat " + seat + " is unavailable.");
+        }
         event.addSeat(seat);
-        return eventDAO.updateEvent(event);
+        boolean updated = eventDAO.updateEvent(event);
+        if (!updated) {
+            throw new EventUpdateException(eventName, "Failed to update event with new seat.");
+        }
+        return true;
     }
 
-    // make a method for list all events available using eventDAO.listEvents
+    // List all events
     public List<Event> listEvents() {
         return eventDAO.listEvents();
     }
 
-    // make a method for find a event available using eventDAO.findEventByName
+    // Find an event by name, throwing exception if not found
     public Event getEventByName(String eventName) throws EventNotFoundException {
         Event event = eventDAO.findEventByName(eventName);
         if (event == null) {
@@ -44,6 +58,7 @@ public class EventController {
         return event;
     }
 
+    // List only available events
     public List<Event> listAvailableEvents() {
         List<Event> events = eventDAO.listEvents();
         List<Event> availableEvents = new ArrayList<>();

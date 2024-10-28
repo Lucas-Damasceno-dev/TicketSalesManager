@@ -2,9 +2,9 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 
-import com.lucas.ticketsalesmanager.exception.EventNotFoundException;
-import com.lucas.ticketsalesmanager.exception.PurchaseException;
-import com.lucas.ticketsalesmanager.exception.UserNotFoundException;
+import com.lucas.ticketsalesmanager.exception.event.EventNotFoundException;
+import com.lucas.ticketsalesmanager.exception.purchase.PurchaseException;
+import com.lucas.ticketsalesmanager.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import com.lucas.ticketsalesmanager.controllers.Controller;
