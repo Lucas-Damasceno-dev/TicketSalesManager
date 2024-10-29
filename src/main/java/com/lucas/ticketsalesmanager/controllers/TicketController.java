@@ -30,7 +30,7 @@ public class TicketController {
 
         Ticket ticket = new Ticket(event, price, seat);
         Purchase purchase = new Purchase(user, ticket, paymentMethod);
-        if (ticketDAO.addTicket(ticket) && purchase.processPurchase(user, ticket, paymentMethod)) {
+        if (ticketDAO.addTicket(ticket) && !purchase.processPurchase(user, ticket, paymentMethod)) {
             return ticket;
         }
         throw new PurchaseException("Failed to purchase ticket.", "Ticket purchase process failed.");

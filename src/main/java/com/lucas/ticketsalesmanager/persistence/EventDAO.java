@@ -52,6 +52,7 @@ public class EventDAO {
     public boolean updateEvent(Event event) {
         List<Event> events = eventDao.readData();
         if (events != null) {
+            System.out.println("Cheguei aqui no updateEvent");
             for (int i = 0; i < events.size(); i++) {
                 if (events.get(i).getName().equals(event.getName())) {
                     events.set(i, event);

@@ -157,6 +157,9 @@ public class Event {
      * @param seat The seat to be removed.
      */
     public void removeSeat(String seat) {
+        System.out.println(availableSeats);
         availableSeats.remove(seat);
+        System.out.println("removi");
+        System.out.println(availableSeats);
     }
 }

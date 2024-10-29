@@ -45,49 +45,46 @@ public class EventController {
         throw new EventNotFoundException(eventName);
     }
 
-    public String addEventSeat(String eventName, String seat) throws EventNotFoundException, EventUpdateException, SeatUnavailableException {
+    public void addEventSeat(String eventName, String seat) throws EventNotFoundException, EventUpdateException, SeatUnavailableException {
         Event event = getEventByName(eventName);
         if (event == null) {
             throw new EventNotFoundException(eventName);
         }
 
-        // Reserva o assento: remove da lista de assentos disponíveis
-        event.addSeat(seat); // Metodo para adicionar à lista de assentos reservados
-
         // Verifica se o assento já está reservado
-        if (!event.getAvailableSeats().contains(seat)) {
+        if (event.getAvailableSeats().contains(seat)) {
             throw new SeatUnavailableException(eventName, "Seat " + seat + " is already reserved.");
         }
 
+        System.out.println("antes de adicionar");
+        // Reserva o assento: remove da lista de assentos disponíveis
+        event.addSeat(seat); // Metodo para adicionar à lista de assentos reservados
+
         // Atualiza o evento no DAO
         boolean updated = eventDAO.updateEvent(event);
+        System.out.println("dps de atualizar");
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event with new seat.");
         }
-        return seat;
     }
 
-    public String removeEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+    public void removeEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
         Event event = getEventByName(eventName);
         if (event == null) {
             throw new EventNotFoundException(eventName);
         }
 
-        // Verifica se o assento está reservado antes de tentar removê-lo
         if (!event.getAvailableSeats().contains(seat)) {
             throw new SeatUnavailableException(eventName, "Seat " + seat + " is not reserved.");
         }
 
-        // Remove o assento da lista de assentos reservados
+        System.out.println("cheguei aqui antes de removeSeat");
         event.removeSeat(seat);
 
-
-        // Atualiza o evento no DAO
         boolean updated = eventDAO.updateEvent(event);
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event by removing seat.");
         }
-        return seat;
     }
 
 
