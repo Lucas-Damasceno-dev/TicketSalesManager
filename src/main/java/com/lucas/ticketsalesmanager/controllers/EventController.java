@@ -6,6 +6,7 @@ import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
 import com.lucas.ticketsalesmanager.exception.event.InvalidEventDateException;
 import com.lucas.ticketsalesmanager.exception.event.EventUpdateException;
 import com.lucas.ticketsalesmanager.exception.event.EventAlreadyExistsException;
+import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.persistence.EventDAO;
 
 import java.util.ArrayList;
@@ -20,7 +21,10 @@ public class EventController {
     }
 
     // Register event, throwing exception if event already exists or has invalid data
-    public boolean registerEvent(Event event) throws EventAlreadyExistsException, InvalidEventDateException {
+    public Event registerEvent(User user, Event event) throws EventAlreadyExistsException, InvalidEventDateException {
+        if (!user.isAdmin()) {
+            throw new IllegalStateException();
+        }
         if (eventDAO.findEventByName(event.getName()) != null) {
             throw new EventAlreadyExistsException(event.getName());
         }
@@ -28,10 +32,11 @@ public class EventController {
             String date = String.valueOf(event.getDate());
             throw new InvalidEventDateException(date);
         }
-        return eventDAO.addEvent(event);
+        eventDAO.addEvent(event);
+        return event;
     }
 
-    public boolean addEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+    public String addEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
         Event event = getEventByName(eventName);
         if (!event.getAvailableSeats().contains(seat)) {
             throw new SeatUnavailableException(eventName, "Seat " + seat + " is unavailable.");
@@ -41,7 +46,17 @@ public class EventController {
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event with new seat.");
         }
-        return true;
+        return seat;
+    }
+
+    public String removeEventSeat(String name, String a1) throws EventUpdateException, EventNotFoundException {
+        Event event = getEventByName(name);
+        event.removeSeat(a1);
+        boolean updated = eventDAO.updateEvent(event);
+        if (!updated) {
+            throw new EventUpdateException(name, "Failed to update event with removed seat.");
+        }
+        return a1;
     }
 
     // List all events

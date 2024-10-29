@@ -86,9 +86,9 @@ public class Purchase {
 
     // Methods
     public boolean processPurchase(User user, Ticket ticket, Payment paymentMethod) throws MessagingException {
-        boolean paymentStatus = paymentMethod.pay(Float.toString(ticket.getPrice()));
+        boolean paymentStatus = paymentMethod.processPayment(Float.toString(ticket.getPrice()));
         if (paymentStatus) {
-            PurchaseConfirmation.sendEmail(user, toString());
+            PurchaseConfirmation.sendEmail(user, this.toString());
             return true;
         }
         return false;

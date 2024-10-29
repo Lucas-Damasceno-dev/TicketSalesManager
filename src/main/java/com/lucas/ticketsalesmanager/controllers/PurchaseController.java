@@ -34,7 +34,7 @@ public class PurchaseController {
      * @throws PaymentException If there is an issue with the payment.
      * @throws InsufficientFundsException If the user does not have enough funds.
      */
-    public void processPurchase(User user, Ticket ticket, Payment payment) throws PurchaseException, TicketUnavailableException, PaymentException, InsufficientFundsException {
+    public Purchase processPurchase(User user, Ticket ticket, Payment payment) throws PurchaseException, TicketUnavailableException, PaymentException, InsufficientFundsException {
         try {
             if (!ticket.isActive()) {
                 throw new TicketUnavailableException("Ticket is not available for purchase.");
@@ -47,6 +47,7 @@ public class PurchaseController {
                 throw new PaymentFailedException("Payment processing failed.", "Additional details if needed");
             }
             purchaseDAO.addPurchase(user, ticket, payment);
+            return new Purchase(user, ticket, payment);
         } catch (Exception e) {
             throw new PurchaseException("Failed to process purchase.", e.getMessage());
         }

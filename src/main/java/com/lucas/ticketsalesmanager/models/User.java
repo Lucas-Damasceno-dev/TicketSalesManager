@@ -195,14 +195,13 @@ public class User {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         User user = (User) obj;
-        return login.equals(user.login) && cpf.equals(user.cpf) && email.equals(user.email);
+        return isAdmin == user.isAdmin &&
+                Objects.equals(login, user.login) &&
+                Objects.equals(cpf, user.cpf) &&
+                Objects.equals(email, user.email);
     }
 
     /**
@@ -212,7 +211,7 @@ public class User {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, cpf, email, login, password, isAdmin, tickets);
+        return Objects.hash(login, cpf, email, isAdmin);
     }
 
     /**
