@@ -10,17 +10,15 @@ import com.lucas.ticketsalesmanager.exception.purchase.PurchaseException;
 import com.lucas.ticketsalesmanager.exception.ticket.TicketAlreadyCanceledException;
 import com.lucas.ticketsalesmanager.exception.ticket.TicketNotCancelableException;
 import com.lucas.ticketsalesmanager.exception.ticket.TicketNotFoundException;
-import com.lucas.ticketsalesmanager.exception.user.UserAlreadyExistsException;
-import com.lucas.ticketsalesmanager.exception.user.UserDAOException;
-import com.lucas.ticketsalesmanager.exception.user.UserNotFoundException;
+import com.lucas.ticketsalesmanager.exception.user.*;
 import com.lucas.ticketsalesmanager.exception.ticket.TicketAlreadyExistsException;
 import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.models.Purchase;
 import com.lucas.ticketsalesmanager.models.Ticket;
 import com.lucas.ticketsalesmanager.models.User;
-import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
 import com.lucas.ticketsalesmanager.models.paymentMethod.Pix;
 import jakarta.mail.MessagingException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +29,7 @@ import com.lucas.ticketsalesmanager.controllers.PurchaseController;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ControllerTest {
-
+class ControllerTest {
     private UserController userController;
     private EventController eventController;
     private TicketController ticketController;
@@ -43,28 +40,65 @@ public class ControllerTest {
     private User userCommon;
     private Event event;
     private Event registeredEvent;
-    private Ticket registeredTicket;
-    private Purchase registeredPurchase;
     private Pix eopix;
 
     @BeforeEach
-    public void setUp() throws UserNotFoundException, UserAlreadyExistsException, UserDAOException, InvalidEventDateException, EventAlreadyExistsException {
+    public void setUp() throws UserAlreadyExistsException, UserDAOException, InvalidEventDateException, EventAlreadyExistsException, UserNotFoundException, EventNotFoundException, UserNotAuthorizedException {
         userController = new UserController();
         eventController = new EventController();
         ticketController = new TicketController();
         purchaseController = new PurchaseController();
 
-        date = getDate(2025, Calendar.SEPTEMBER, 10);
-        admin = userController.registerUser("admin", "password123", "Admin User", "00000000000", "admin@example.com", true);
-        userCommon = userController.registerUser("johndoe", "password123", "John Doe", "12345678901", "john.doe@example.com", false);
-        event = new Event("Concert", "BACH presentation", date);
-        registeredEvent = eventController.registerEvent(admin, event);
+        date = getDate();
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        admin = userController.registerUser("admin" + uniqueSuffix, "password123", "Admin User", "00000000000", "admin@example.com", true);
+        userCommon = userController.registerUser("johndoe" + uniqueSuffix, "password123", "John Doe", "12345678901", "john.doe@example.com", false);
+
+        // Verifica se o evento já está registrado antes de tentar registrá-lo
+        try {
+            event = new Event("Concert", "BACH presentation", date);
+            registeredEvent = eventController.registerEvent(admin, event);
+            registeredEvent.addSeat("A1");  // Adiciona o assento "A1" aqui
+        } catch (EventAlreadyExistsException e) {
+            registeredEvent = eventController.getEventByName("Concert");
+            registeredEvent.addSeat("A1");  // Certifica-se que "A1" está disponível também ao pegar um evento existente
+        }
+
         eopix = new Pix("123456789");
+    }
+
+
+
+    @AfterEach
+    public void tearDown() {
+        try {
+            if (userCommon != null) {
+                userController.removeUser(userCommon.getName());
+            }
+        } catch (UserNotFoundException | UserRemovalException e) {
+            // Log ou ignore
+        }
+
+        try {
+            if (admin != null) {
+                userController.removeUser(admin.getName());
+            }
+        } catch (UserNotFoundException | UserRemovalException e) {
+            // Log ou ignore
+        }
+
+        try {
+            if (registeredEvent != null) {
+                eventController.removeEvent(registeredEvent.getName());
+            }
+        } catch (EventNotFoundException e) {
+            // Log ou ignore
+        }
     }
 
     // Tests for EventController
     @Test
-    public void testRegisterEventByAdmin() throws InvalidEventDateException, EventAlreadyExistsException {
+    void testRegisterEventByAdmin() {
         assertNotNull(registeredEvent);
         assertEquals("Concert", registeredEvent.getName());
         assertEquals("BACH presentation", registeredEvent.getDescription());
@@ -72,29 +106,37 @@ public class ControllerTest {
     }
 
     @Test
-    public void testRegisterEventByCommonUser() {
+    void testRegisterEventByCommonUser() {
 
+        UserNotAuthorizedException exception = assertThrows(UserNotAuthorizedException.class, () -> eventController.registerEvent(userCommon, event));
 
-        Exception exception = assertThrows(SecurityException.class, () -> {
-            eventController.registerEvent(userCommon, event);
-        });
+        assertEquals("Only administrators can register events.", exception.getUserMessage());
 
-        assertEquals("Only administrators can register events.", exception.getMessage());
+        String expectedDetailMessage = "The user " + userCommon.getName() + " is not an admin!";
+        assertEquals(expectedDetailMessage, exception.getMessage());
     }
 
+
+
+
     @Test
-    public void testAddAndRemoveEventSeat() throws EventNotFoundException, InvalidEventDateException, EventAlreadyExistsException, SeatUnavailableException, EventUpdateException {
+    void testAddAndRemoveEventSeat() throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+        // O assento A1 já deve estar disponível por causa do setUp.
         eventController.addEventSeat(registeredEvent.getName(), "A1");
+        assertTrue(registeredEvent.getAvailableSeats().contains("A1"));
 
-        List<String> seats = event.getAvailableSeats();
-        assertTrue(seats.contains("A1"));
+        assertEquals(1, registeredEvent.getAvailableSeats().size());
 
-        eventController.removeEventSeat(event.getName(), "A1");
-        assertFalse(seats.contains("A1"));
+        eventController.removeEventSeat(registeredEvent.getName(), "A1");
+        assertFalse(registeredEvent.getAvailableSeats().contains("A1"));
+
+        assertEquals(0, registeredEvent.getAvailableSeats().size());
     }
 
+
+
     @Test
-    public void testListAvailableEvents() {
+    void testListAvailableEvents() {
 
         List<Event> events = eventController.listAvailableEvents();
 
@@ -103,7 +145,7 @@ public class ControllerTest {
 
     // Tests for TicketController
     @Test
-    public void testPurchaseTicket() throws TicketAlreadyExistsException, PurchaseException, SeatUnavailableException, EventUpdateException, EventNotFoundException, MessagingException {
+    void testPurchaseTicket() throws TicketAlreadyExistsException, PurchaseException, SeatUnavailableException, EventUpdateException, EventNotFoundException, MessagingException {
 
         eventController.addEventSeat(event.getName(), "A1");
 
@@ -116,7 +158,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCancelTicket() throws EventNotFoundException, PurchaseException, SeatUnavailableException, EventUpdateException, TicketAlreadyExistsException, MessagingException, TicketAlreadyCanceledException, TicketNotFoundException, TicketNotCancelableException {
+    void testCancelTicket() throws EventNotFoundException, PurchaseException, SeatUnavailableException, EventUpdateException, TicketAlreadyExistsException, MessagingException, TicketAlreadyCanceledException, TicketNotFoundException, TicketNotCancelableException {
 
         eventController.addEventSeat(event.getName(), "A1");
 
@@ -131,7 +173,7 @@ public class ControllerTest {
 
     // Tests for PurchaseController
     @Test
-    public void testProcessPurchase() throws PurchaseException, TicketAlreadyExistsException, SeatUnavailableException, EventUpdateException, EventNotFoundException, MessagingException, PaymentException {
+    void testProcessPurchase() throws PurchaseException, TicketAlreadyExistsException, SeatUnavailableException, EventUpdateException, EventNotFoundException, MessagingException, PaymentException {
 
         eventController.addEventSeat(event.getName(), "A1");
         Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
@@ -142,7 +184,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCancelPurchase() throws PurchaseException, SeatUnavailableException, EventUpdateException, EventNotFoundException, TicketAlreadyExistsException, MessagingException, PaymentException {
+    void testCancelPurchase() throws PurchaseException, SeatUnavailableException, EventUpdateException, EventNotFoundException, TicketAlreadyExistsException, MessagingException, PaymentException {
 
         eventController.addEventSeat(event.getName(), "A1");
         Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
@@ -156,9 +198,9 @@ public class ControllerTest {
     }
 
     // Utility method for date creation
-    private Date getDate(int year, int month, int day) {
+    private Date getDate() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
+        calendar.set(2025, Calendar.SEPTEMBER, 10);
         return calendar.getTime();
     }
 }

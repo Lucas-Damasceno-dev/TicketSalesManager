@@ -110,32 +110,17 @@ public class Event {
     }
 
     // Overridden Methods
-    /**
-     * Compares two Event objects to see if they are equal, based on name, description, date, available seats, and active state.
-     *
-     * @param o The object to be compared.
-     * @return {@code true} if the objects are equal, {@code false} otherwise.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return isActive == event.isActive &&
-                Objects.equals(name, event.name) &&
-                Objects.equals(description, event.description) &&
-                Objects.equals(date, event.date) &&
-                Objects.equals(availableSeats, event.availableSeats);
+        return isActive == event.isActive && Objects.equals(name, event.name) && Objects.equals(description, event.description) && Objects.equals(date, event.date) && Objects.equals(availableSeats, event.availableSeats) && Objects.equals(eventFeedbacks, event.eventFeedbacks);
     }
 
-    /**
-     * Returns the hash code for the Event object, based on the attributes name, description, date, available seats, and active state.
-     *
-     * @return The hash code.
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, date, availableSeats, isActive);
+        return Objects.hash(name, description, date, availableSeats, eventFeedbacks, isActive);
     }
 
     /**

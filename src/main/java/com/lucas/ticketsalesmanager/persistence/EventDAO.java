@@ -20,14 +20,13 @@ public class EventDAO {
     }
 
     // Add a new event
-    public boolean addEvent(Event event) {
+    public void addEvent(Event event) {
         List<Event> events = eventDao.readData();
         if (events == null) {
             events = new ArrayList<>();
         }
         events.add(event);
         eventDao.writeData(events);
-        return true;
     }
 
     // List all events
@@ -52,15 +51,17 @@ public class EventDAO {
     // Update event information
     public boolean updateEvent(Event event) {
         List<Event> events = eventDao.readData();
-        if (events!= null) {
+        if (events != null) {
             for (int i = 0; i < events.size(); i++) {
                 if (events.get(i).getName().equals(event.getName())) {
                     events.set(i, event);
                     eventDao.writeData(events);
+                    System.out.println("Evento atualizado e salvo no arquivo JSON.");
                     return true;
                 }
             }
         }
+        System.out.println("Evento não encontrado para atualização.");
         return false;
     }
 

@@ -1,5 +1,6 @@
 package com.lucas.ticketsalesmanager.controllers;
 
+import com.lucas.ticketsalesmanager.exception.user.UserNotAuthorizedException;
 import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.exception.event.EventNotFoundException;
 import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
@@ -21,9 +22,9 @@ public class EventController {
     }
 
     // Register event, throwing exception if event already exists or has invalid data
-    public Event registerEvent(User user, Event event) throws EventAlreadyExistsException, InvalidEventDateException {
+    public Event registerEvent(User user, Event event) throws EventAlreadyExistsException, InvalidEventDateException, UserNotAuthorizedException {
         if (!user.isAdmin()) {
-            throw new IllegalStateException();
+            throw new UserNotAuthorizedException(user.getName());
         }
         if (eventDAO.findEventByName(event.getName()) != null) {
             throw new EventAlreadyExistsException(event.getName());
@@ -36,12 +37,29 @@ public class EventController {
         return event;
     }
 
-    public String addEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+    public void removeEvent(String eventName) throws EventNotFoundException {
         Event event = getEventByName(eventName);
-        if (!event.getAvailableSeats().contains(seat)) {
-            throw new SeatUnavailableException(eventName, "Seat " + seat + " is unavailable.");
+        if (event.getName().equals(eventName)) {
+            eventDAO.deleteEvent(eventName);
         }
-        event.addSeat(seat);
+        throw new EventNotFoundException(eventName);
+    }
+
+    public String addEventSeat(String eventName, String seat) throws EventNotFoundException, EventUpdateException, SeatUnavailableException {
+        Event event = getEventByName(eventName);
+        if (event == null) {
+            throw new EventNotFoundException(eventName);
+        }
+
+        // Reserva o assento: remove da lista de assentos disponíveis
+        event.addSeat(seat); // Metodo para adicionar à lista de assentos reservados
+
+        // Verifica se o assento já está reservado
+        if (!event.getAvailableSeats().contains(seat)) {
+            throw new SeatUnavailableException(eventName, "Seat " + seat + " is already reserved.");
+        }
+
+        // Atualiza o evento no DAO
         boolean updated = eventDAO.updateEvent(event);
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event with new seat.");
@@ -49,15 +67,29 @@ public class EventController {
         return seat;
     }
 
-    public String removeEventSeat(String name, String a1) throws EventUpdateException, EventNotFoundException {
-        Event event = getEventByName(name);
-        event.removeSeat(a1);
+    public String removeEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+        Event event = getEventByName(eventName);
+        if (event == null) {
+            throw new EventNotFoundException(eventName);
+        }
+
+        // Verifica se o assento está reservado antes de tentar removê-lo
+        if (!event.getAvailableSeats().contains(seat)) {
+            throw new SeatUnavailableException(eventName, "Seat " + seat + " is not reserved.");
+        }
+
+        // Remove o assento da lista de assentos reservados
+        event.removeSeat(seat);
+
+
+        // Atualiza o evento no DAO
         boolean updated = eventDAO.updateEvent(event);
         if (!updated) {
-            throw new EventUpdateException(name, "Failed to update event with removed seat.");
+            throw new EventUpdateException(eventName, "Failed to update event by removing seat.");
         }
-        return a1;
+        return seat;
     }
+
 
     // List all events
     public List<Event> listEvents() {
