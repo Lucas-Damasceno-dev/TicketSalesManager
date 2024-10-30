@@ -1,3 +1,14 @@
+/***********************************************************************************************
+Author: LUCAS DA CONCEIÇÃO DAMASCENO
+Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+Completed on: 10/24/2024
+I declare that this code was prepared by me individually and does not contain any
+code snippet from another colleague or another author, such as from books and
+handouts, and web pages or electronic documents. Any piece of code
+by someone other than mine is highlighted with a citation for the author and source
+of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+************************************************************************************************/
+
 package com.lucas.ticketsalesmanager.models;
 
 import com.lucas.ticketsalesmanager.service.communication.EventFeedback;
@@ -49,6 +60,9 @@ public class User {
      */
     private final ArrayList<Ticket> tickets;
 
+    /**
+     * List of feedback provided by the user for events.
+     */
     private final ArrayList<EventFeedback> eventFeedbacks;
 
     // Constructor
@@ -182,6 +196,11 @@ public class User {
         return tickets;
     }
 
+    /**
+     * Gets the list of event feedback provided by the user.
+     *
+     * @return The list of event feedback.
+     */
     public List<EventFeedback> getFeedback() {
         return eventFeedbacks;
     }

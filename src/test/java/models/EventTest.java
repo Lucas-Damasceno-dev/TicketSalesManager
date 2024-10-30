@@ -1,3 +1,14 @@
+/***********************************************************************************************
+Author: LUCAS DA CONCEIÇÃO DAMASCENO
+Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+Completed on: 10/24/2024
+I declare that this code was prepared by me individually and does not contain any
+code snippet from another colleague or another author, such as from books and
+handouts, and web pages or electronic documents. Any piece of code
+by someone other than mine is highlighted with a citation for the author and source
+of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+************************************************************************************************/
+
 package models;
 
 import com.lucas.ticketsalesmanager.models.Event;
@@ -33,7 +44,7 @@ public class EventTest {
         assertEquals("Future Event", futureEvent.getName());
         assertEquals("Future Band", futureEvent.getDescription());
         assertEquals(futureEvent.getDate(), futureEvent.getDate());
-        assertTrue(futureEvent.isActive(), "Evento futuro deve estar ativo");
+        assertTrue(futureEvent.isActive(), "Future event should be active");
     }
 
     @Test
@@ -47,7 +58,7 @@ public class EventTest {
         futureEvent.addSeat("A1");
         futureEvent.addSeat("A1");
 
-        assertEquals(1, futureEvent.getAvailableSeats().size(), "Assento duplicado não deve ser adicionado");
+        assertEquals(1, futureEvent.getAvailableSeats().size(), "Duplicate seat should not be added");
     }
 
     @Test
@@ -55,38 +66,38 @@ public class EventTest {
         futureEvent.addSeat("A1");
         futureEvent.removeSeat("A1");
 
-        assertFalse(futureEvent.getAvailableSeats().contains("A1"), "Assento removido não deve estar na lista");
+        assertFalse(futureEvent.getAvailableSeats().contains("A1"), "Removed seat should not be in the list");
     }
 
     @Test
     public void testRemoveNonExistentSeat() {
         futureEvent.removeSeat("A1");
-        assertFalse(futureEvent.getAvailableSeats().contains("A1"), "Remover assento não existente não deve gerar erro");
+        assertFalse(futureEvent.getAvailableSeats().contains("A1"), "Removing a non-existent seat should not cause an error");
     }
 
     @Test
     public void testActiveEvent() {
-        assertTrue(futureEvent.isActive(), "Evento futuro deve estar ativo");
+        assertTrue(futureEvent.isActive(), "Future event should be active");
     }
 
     @Test
     public void testInactiveEvent() {
-        assertFalse(pastEvent.isActive(), "Evento passado deve estar inativo");
+        assertFalse(pastEvent.isActive(), "Past event should be inactive");
     }
 
     @Test
     public void testEventEquality() {
         Event eventDuplicate = new Event("Future Event", "Future Band", futureEvent.getDate());
 
-        assertEquals(futureEvent, eventDuplicate, "Eventos com mesmos atributos devem ser iguais");
-        assertEquals(futureEvent.hashCode(), eventDuplicate.hashCode(), "Hash codes de eventos iguais devem coincidir");
+        assertEquals(futureEvent, eventDuplicate, "Events with the same attributes should be equal");
+        assertEquals(futureEvent.hashCode(), eventDuplicate.hashCode(), "Hash codes of equal events should match");
     }
 
     @Test
     public void testEventInequalityDifferentName() {
         Event differentEvent = new Event("Different Event", "Future Band", futureEvent.getDate());
 
-        assertNotEquals(futureEvent, differentEvent, "Eventos com nomes diferentes não devem ser iguais");
+        assertNotEquals(futureEvent, differentEvent, "Events with different names should not be equal");
     }
 
     @Test
@@ -97,13 +108,13 @@ public class EventTest {
 
         Event differentDateEvent = new Event("Future Event", "Future Band", newDate);
 
-        assertNotEquals(futureEvent, differentDateEvent, "Eventos com datas diferentes não devem ser iguais");
+        assertNotEquals(futureEvent, differentDateEvent, "Events with different dates should not be equal");
     }
 
     @Test
     public void testEventFeedbackListEmptyByDefault() {
-        assertNotNull(futureEvent.getFeedbacks(), "Lista de feedbacks deve ser inicializada");
-        assertTrue(futureEvent.getFeedbacks().isEmpty(), "Lista de feedbacks deve estar vazia por padrão");
+        assertNotNull(futureEvent.getFeedbacks(), "Feedback list should be initialized");
+        assertTrue(futureEvent.getFeedbacks().isEmpty(), "Feedback list should be empty by default");
     }
 
     @Test
@@ -119,8 +130,9 @@ public class EventTest {
         futureEvent.getFeedbacks().add(feedback1);
         futureEvent.getFeedbacks().add(feedback2);
 
-        assertEquals(2, futureEvent.getFeedbacks().size(), "Lista de feedbacks deve conter dois feedbacks");
-        assertTrue(futureEvent.getFeedbacks().contains(feedback1), "Feedback1 adicionado deve estar na lista");
-        assertTrue(futureEvent.getFeedbacks().contains(feedback2), "Feedback2 adicionado deve estar na lista");
+        assertEquals(2, futureEvent.getFeedbacks().size(), "Feedback list should contain two feedbacks");
+        assertTrue(futureEvent.getFeedbacks().contains(feedback1), "Feedback1 added should be in the list");
+        assertTrue(futureEvent.getFeedbacks().contains(feedback2), "Feedback2 added should be in the list");
     }
 }
+

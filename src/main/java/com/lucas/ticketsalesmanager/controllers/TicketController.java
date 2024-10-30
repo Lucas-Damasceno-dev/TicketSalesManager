@@ -1,3 +1,14 @@
+/***********************************************************************************************
+Author: LUCAS DA CONCEIÇÃO DAMASCENO
+Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+Completed on: 10/24/2024
+I declare that this code was prepared by me individually and does not contain any
+code snippet from another colleague or another author, such as from books and
+handouts, and web pages or electronic documents. Any piece of code
+by someone other than mine is highlighted with a citation for the author and source
+of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+************************************************************************************************/
+
 package com.lucas.ticketsalesmanager.controllers;
 
 import com.lucas.ticketsalesmanager.models.Event;
@@ -12,14 +23,33 @@ import jakarta.mail.MessagingException;
 
 import java.util.List;
 
+/**
+ * Controller responsible for managing ticket operations in the system.
+ * This class provides methods to purchase, cancel, reactivate, and list tickets.
+ */
 public class TicketController {
     private final TicketDAO ticketDAO;
 
+    /**
+     * Constructs a TicketController and initializes the TicketDAO.
+     */
     public TicketController() {
         this.ticketDAO = new TicketDAO();
     }
 
-    // Purchase a ticket
+    /**
+     * Purchases a ticket for a specified event and seat.
+     *
+     * @param user The user purchasing the ticket.
+     * @param event The event for which the ticket is being purchased.
+     * @param price The price of the ticket.
+     * @param seat The seat associated with the ticket.
+     * @param paymentMethod The payment method used for the purchase.
+     * @return The purchased ticket.
+     * @throws PurchaseException If the ticket purchase fails.
+     * @throws MessagingException If there is an issue with sending a confirmation message.
+     * @throws TicketAlreadyExistsException If a ticket for the specified seat and event already exists.
+     */
     public Ticket purchaseTicket(User user, Event event, float price, String seat, Payment paymentMethod)
             throws PurchaseException, MessagingException, TicketAlreadyExistsException {
         Ticket existingTicket = ticketDAO.findTicketByEventAndSeat(event, seat);
@@ -30,13 +60,23 @@ public class TicketController {
 
         Ticket ticket = new Ticket(event, price, seat);
         Purchase purchase = new Purchase(user, ticket, paymentMethod);
-        if (ticketDAO.addTicket(ticket) && purchase.processPurchase(user, ticket, paymentMethod)) {
+        if (purchase.processPurchase(user, ticket, paymentMethod)) {
+            ticketDAO.addTicket(ticket);
             return ticket;
         }
         throw new PurchaseException("Failed to purchase ticket.", "Ticket purchase process failed.");
     }
 
-    // Cancel a ticket
+    /**
+     * Cancels a ticket for a specified user.
+     *
+     * @param user The user attempting to cancel the ticket.
+     * @param ticket The ticket to be canceled.
+     * @return True if the cancellation is successful.
+     * @throws TicketNotCancelableException If the ticket cannot be canceled.
+     * @throws TicketAlreadyCanceledException If the ticket has already been canceled.
+     * @throws TicketNotFoundException If the ticket cannot be found.
+     */
     public boolean cancelTicket(User user, Ticket ticket)
             throws TicketNotCancelableException, TicketAlreadyCanceledException, TicketNotFoundException {
 
@@ -52,7 +92,16 @@ public class TicketController {
         return true;
     }
 
-    // Reactivate a canceled ticket
+    /**
+     * Reactivates a canceled ticket for a specified user.
+     *
+     * @param user The user attempting to reactivate the ticket.
+     * @param ticket The ticket to be reactivated.
+     * @return True if the reactivation is successful.
+     * @throws TicketNotFoundException If the ticket cannot be found.
+     * @throws TicketAlreadyReactivatedException If the ticket is already active.
+     * @throws InvalidTicketException If the user is not authorized to reactivate the ticket.
+     */
     public boolean reactivateTicket(User user, Ticket ticket)
             throws TicketNotFoundException, TicketAlreadyReactivatedException, InvalidTicketException {
         if (!user.isAdmin() || !user.getTickets().contains(ticket)) {
@@ -72,12 +121,25 @@ public class TicketController {
         return true;
     }
 
-    // List all purchased tickets by a user
+    /**
+     * Lists all tickets purchased by a specified user.
+     *
+     * @param user The user whose purchased tickets are to be listed.
+     * @return A list of tickets purchased by the user.
+     */
     public List<Ticket> listPurchasedTickets(User user) {
         return user.getTickets();
     }
 
-    // Find a ticket by user, event, and seat
+    /**
+     * Finds a ticket based on user, event, and seat.
+     *
+     * @param user The user associated with the ticket.
+     * @param event The event associated with the ticket.
+     * @param seat The seat associated with the ticket.
+     * @return The found ticket.
+     * @throws TicketNotFoundException If the ticket cannot be found for the specified user, event, and seat.
+     */
     public Ticket findTicketsByUserAndEventAndSeat(User user, Event event, String seat)
             throws TicketNotFoundException {
         Ticket ticket = ticketDAO.findTicketByEventAndSeat(event, seat);

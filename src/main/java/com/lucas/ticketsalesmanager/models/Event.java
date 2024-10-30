@@ -1,3 +1,14 @@
+/***********************************************************************************************
+Author: LUCAS DA CONCEIÇÃO DAMASCENO
+Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+Completed on: 10/24/2024
+I declare that this code was prepared by me individually and does not contain any
+code snippet from another colleague or another author, such as from books and
+handouts, and web pages or electronic documents. Any piece of code
+by someone other than mine is highlighted with a citation for the author and source
+of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+************************************************************************************************/
+
 package com.lucas.ticketsalesmanager.models;
 
 import com.lucas.ticketsalesmanager.service.communication.EventFeedback;
@@ -34,6 +45,9 @@ public class Event {
      */
     private final ArrayList<String> availableSeats;
 
+    /**
+     * List of feedback for the event.
+     */
     private final ArrayList<EventFeedback> eventFeedbacks;
 
     /**
@@ -46,9 +60,9 @@ public class Event {
      * Constructs a new Event with the provided name, description, and date.
      * The event is marked as active if the date is after the current date.
      *
-     * @param name The name of the event.
+     * @param name        The name of the event.
      * @param description The description of the event.
-     * @param date The date of the event.
+     * @param date        The date of the event.
      */
     public Event(String name, String description, Date date) {
         this.name = name;
@@ -105,6 +119,11 @@ public class Event {
         return isActive;
     }
 
+    /**
+     * Gets the list of feedback for the event.
+     *
+     * @return A list of event feedbacks.
+     */
     public List<EventFeedback> getFeedbacks() {
         return eventFeedbacks;
     }
@@ -115,7 +134,12 @@ public class Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return isActive == event.isActive && Objects.equals(name, event.name) && Objects.equals(description, event.description) && Objects.equals(date, event.date) && Objects.equals(availableSeats, event.availableSeats) && Objects.equals(eventFeedbacks, event.eventFeedbacks);
+        return isActive == event.isActive &&
+                Objects.equals(name, event.name) &&
+                Objects.equals(description, event.description) &&
+                Objects.equals(date, event.date) &&
+                Objects.equals(availableSeats, event.availableSeats) &&
+                Objects.equals(eventFeedbacks, event.eventFeedbacks);
     }
 
     @Override
@@ -141,7 +165,7 @@ public class Event {
 
     // Class Methods
     /**
-     * Adds a seat to the list of available seats, if it is not already present.
+     * Adds a seat to the list of available seats if it is not already present.
      *
      * @param seat The seat to be added.
      */
@@ -152,14 +176,15 @@ public class Event {
     }
 
     /**
-     * Removes a seat from the list of available seats, if it is present.
+     * Removes a seat from the list of available seats if it is present.
      *
      * @param seat The seat to be removed.
      */
     public void removeSeat(String seat) {
-        System.out.println(availableSeats);
-        availableSeats.remove(seat);
-        System.out.println("removi");
-        System.out.println(availableSeats);
+        if (availableSeats.remove(seat)) {
+            System.out.println("Seat removed: " + seat);
+        } else {
+            System.out.println("Seat not found: " + seat);
+        }
     }
 }

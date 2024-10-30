@@ -1,3 +1,14 @@
+/***********************************************************************************************
+Author: LUCAS DA CONCEIÇÃO DAMASCENO
+Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+Completed on: 10/24/2024
+I declare that this code was prepared by me individually and does not contain any
+code snippet from another colleague or another author, such as from books and
+handouts, and web pages or electronic documents. Any piece of code
+by someone other than mine is highlighted with a citation for the author and source
+of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+************************************************************************************************/
+
 package com.lucas.ticketsalesmanager.controllers;
 
 import com.lucas.ticketsalesmanager.exception.purchase.*;
@@ -19,6 +30,9 @@ public class PurchaseController {
 
     private final PurchaseDAO purchaseDAO;
 
+    /**
+     * Constructs a PurchaseController and initializes the PurchaseDAO.
+     */
     public PurchaseController() {
         this.purchaseDAO = new PurchaseDAO();
     }
@@ -29,20 +43,19 @@ public class PurchaseController {
      * @param user The user making the purchase.
      * @param ticket The ticket being purchased.
      * @param payment The payment method used for the purchase.
+     * @return The completed Purchase object.
      * @throws PurchaseException If there's an error during the purchase process.
      * @throws TicketUnavailableException If the ticket is unavailable.
      * @throws PaymentException If there is an issue with the payment.
      * @throws InsufficientFundsException If the user does not have enough funds.
      */
-    public Purchase processPurchase(User user, Ticket ticket, Payment payment) throws PurchaseException, TicketUnavailableException, PaymentException, InsufficientFundsException {
+    public Purchase processPurchase(User user, Ticket ticket, Payment payment)
+            throws PurchaseException, TicketUnavailableException, PaymentException, InsufficientFundsException {
         try {
             if (!ticket.isActive()) {
                 throw new TicketUnavailableException("Ticket is not available for purchase.");
             }
-            // Assuming the correct method names for the Payment class
-            if (!payment.validate(payment.getPaymentDetails())) {
-                throw new InvalidPaymentMethodException("Invalid payment method selected.");
-            }
+
             if (!payment.executePayment()) {
                 throw new PaymentFailedException("Payment processing failed.", "Additional details if needed");
             }
@@ -87,7 +100,7 @@ public class PurchaseController {
      * Lists all purchases made by a specific user.
      *
      * @param user The user whose purchases to list.
-     * @return List of purchases made by the user.
+     * @return A list of purchases made by the user.
      */
     public List<Purchase> listPurchasesByUser(User user) {
         return purchaseDAO.findPurchasesByUser(user);
@@ -97,7 +110,7 @@ public class PurchaseController {
      * Lists all purchases associated with a particular event.
      *
      * @param event The event whose associated purchases to list.
-     * @return List of purchases for the event.
+     * @return A list of purchases for the event.
      */
     public List<Purchase> listPurchasesByEvent(Event event) {
         return purchaseDAO.listPurchasesByEvent(event);
@@ -107,7 +120,7 @@ public class PurchaseController {
      * Finds purchases by the payment method used.
      *
      * @param paymentMethod The payment method to search by.
-     * @return List of purchases using the specified payment method.
+     * @return A list of purchases using the specified payment method.
      */
     public List<Purchase> findPurchasesByPaymentMethod(Payment paymentMethod) {
         return purchaseDAO.findPurchasesByPaymentMethod(paymentMethod);
@@ -117,7 +130,7 @@ public class PurchaseController {
      * Retrieves purchases based on the ticket.
      *
      * @param ticket The ticket associated with the purchases.
-     * @return List of purchases related to the ticket.
+     * @return A list of purchases related to the ticket.
      */
     public List<Purchase> findPurchasesByTicket(Ticket ticket) {
         return purchaseDAO.findPurchasesByTicket(ticket);
@@ -136,7 +149,7 @@ public class PurchaseController {
     /**
      * Lists all purchases made in the system.
      *
-     * @return List of all purchases.
+     * @return A list of all purchases.
      */
     public List<Purchase> listAllPurchases() {
         return purchaseDAO.listPurchases();
