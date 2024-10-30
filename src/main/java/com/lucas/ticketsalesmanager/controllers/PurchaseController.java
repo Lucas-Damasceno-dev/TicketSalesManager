@@ -47,6 +47,7 @@ public class PurchaseController {
                 throw new PaymentFailedException("Payment processing failed.", "Additional details if needed");
             }
             purchaseDAO.addPurchase(user, ticket, payment);
+            user.getTickets().add(ticket);
             return new Purchase(user, ticket, payment);
         } catch (Exception e) {
             throw new PurchaseException("Failed to process purchase.", e.getMessage());

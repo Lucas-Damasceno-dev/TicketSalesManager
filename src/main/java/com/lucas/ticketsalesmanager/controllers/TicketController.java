@@ -30,7 +30,7 @@ public class TicketController {
 
         Ticket ticket = new Ticket(event, price, seat);
         Purchase purchase = new Purchase(user, ticket, paymentMethod);
-        if (ticketDAO.addTicket(ticket) && !purchase.processPurchase(user, ticket, paymentMethod)) {
+        if (ticketDAO.addTicket(ticket) && purchase.processPurchase(user, ticket, paymentMethod)) {
             return ticket;
         }
         throw new PurchaseException("Failed to purchase ticket.", "Ticket purchase process failed.");
@@ -39,10 +39,6 @@ public class TicketController {
     // Cancel a ticket
     public boolean cancelTicket(User user, Ticket ticket)
             throws TicketNotCancelableException, TicketAlreadyCanceledException, TicketNotFoundException {
-        if (!user.isAdmin() || !user.getTickets().contains(ticket)) {
-            throw new TicketNotCancelableException("User is not authorized to cancel this ticket.",
-                    "Non-admin or ticket does not belong to the user.");
-        }
 
         if (!ticket.isActive()) {
             throw new TicketAlreadyCanceledException("Ticket is already canceled.",

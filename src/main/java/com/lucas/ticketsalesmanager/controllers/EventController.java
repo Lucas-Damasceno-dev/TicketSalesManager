@@ -45,7 +45,7 @@ public class EventController {
         throw new EventNotFoundException(eventName);
     }
 
-    public void addEventSeat(String eventName, String seat) throws EventNotFoundException, EventUpdateException, SeatUnavailableException {
+    public Event addEventSeat(String eventName, String seat) throws EventNotFoundException, EventUpdateException, SeatUnavailableException {
         Event event = getEventByName(eventName);
         if (event == null) {
             throw new EventNotFoundException(eventName);
@@ -66,9 +66,10 @@ public class EventController {
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event with new seat.");
         }
+        return event;
     }
 
-    public void removeEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
+    public Event removeEventSeat(String eventName, String seat) throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
         Event event = getEventByName(eventName);
         if (event == null) {
             throw new EventNotFoundException(eventName);
@@ -85,6 +86,7 @@ public class EventController {
         if (!updated) {
             throw new EventUpdateException(eventName, "Failed to update event by removing seat.");
         }
+        return event;
     }
 
 

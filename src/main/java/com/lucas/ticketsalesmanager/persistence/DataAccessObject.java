@@ -41,5 +41,4 @@ public class DataAccessObject<T> {
             return false;
         }
     }
-
 }

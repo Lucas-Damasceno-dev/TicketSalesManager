@@ -37,7 +37,7 @@ class ControllerTest {
 
     @Test
     @Order(1)
-    void setUpInitialData() throws InvalidEventDateException, EventAlreadyExistsException, UserNotAuthorizedException, EventNotFoundException, UserNotFoundException, UserDAOException {
+    void setUpInitialData() throws InvalidEventDateException, UserNotAuthorizedException, EventNotFoundException, UserNotFoundException, UserDAOException {
         // Configuração inicial para o evento e usuários
         date = getDate();
 
@@ -82,19 +82,18 @@ class ControllerTest {
     @Test
     @Order(4)
     void testAddAndRemoveEventSeat() throws EventNotFoundException, SeatUnavailableException, EventUpdateException {
-        if (registeredEvent.getAvailableSeats().isEmpty()) {
-            eventController.addEventSeat(registeredEvent.getName(), "A1");
-        }
+
+        Event event = eventController.addEventSeat(registeredEvent.getName(), "A1");
 
         System.out.println("Os assentos disponiveis são:"+ registeredEvent.getAvailableSeats());
 
-        assertTrue(registeredEvent.getAvailableSeats().contains("A1"));
-        assertEquals(1, registeredEvent.getAvailableSeats().size());
+        assertTrue(event.getAvailableSeats().contains("A1"));
+        assertEquals(1, event.getAvailableSeats().size());
 
         // Remove o assento e confirma a remoção
-        eventController.removeEventSeat(registeredEvent.getName(), "A1");
-        assertFalse(registeredEvent.getAvailableSeats().contains("A1"));
-        assertEquals(0, registeredEvent.getAvailableSeats().size());
+        Event event0 = eventController.removeEventSeat(event.getName(), "A1");
+        assertFalse(event0.getAvailableSeats().contains("A1"));
+        assertEquals(0, event0.getAvailableSeats().size());
     }
 
     @Test
@@ -110,11 +109,11 @@ class ControllerTest {
             SeatUnavailableException, EventUpdateException, EventNotFoundException, MessagingException {
         // Adiciona o assento para o teste de compra
         if (!registeredEvent.getAvailableSeats().contains("A1")) {
-            eventController.addEventSeat(registeredEvent.getName(), "A1");
+            Event event = eventController.addEventSeat(registeredEvent.getName(), "A1");
         }
 
         // Realiza a compra do ingresso
-        Ticket ticket = ticketController.purchaseTicket(userCommon, registeredEvent, 100.0f, "A1", eopix);
+        Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
 
         assertNotNull(ticket);
         assertEquals("Concert", ticket.getEvent().getName());
@@ -130,9 +129,9 @@ class ControllerTest {
 
         // Adiciona o assento e realiza a compra para preparar a remoção
         if (!registeredEvent.getAvailableSeats().contains("A1")) {
-            eventController.addEventSeat(registeredEvent.getName(), "A1");
+            Event event = eventController.addEventSeat(registeredEvent.getName(), "A1");
         }
-        Ticket ticket = ticketController.purchaseTicket(userCommon, registeredEvent, 100.0f, "A1", eopix);
+        Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
 
         // Cancela o ingresso e verifica o estado
         boolean cancelled = ticketController.cancelTicket(admin, ticket);
@@ -148,9 +147,9 @@ class ControllerTest {
 
         // Adiciona o assento e realiza a compra
         if (!registeredEvent.getAvailableSeats().contains("A1")) {
-            eventController.addEventSeat(registeredEvent.getName(), "A1");
+            Event event = eventController.addEventSeat(registeredEvent.getName(), "A1");
         }
-        Ticket ticket = ticketController.purchaseTicket(userCommon, registeredEvent, 100.0f, "A1", eopix);
+        Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
 
         // Processa a compra e verifica o estado
         purchaseController.processPurchase(userCommon, ticket, eopix);
@@ -164,9 +163,9 @@ class ControllerTest {
 
         // Adiciona o assento e realiza a compra
         if (!registeredEvent.getAvailableSeats().contains("A1")) {
-            eventController.addEventSeat(registeredEvent.getName(), "A1");
+            Event event = eventController.addEventSeat(registeredEvent.getName(), "A1");
         }
-        Ticket ticket = ticketController.purchaseTicket(userCommon, registeredEvent, 100.0f, "A1", eopix);
+        Ticket ticket = ticketController.purchaseTicket(userCommon, event, 100.0f, "A1", eopix);
 
         // Processa e cancela a compra, verificando o estado
         Purchase purchaseProcessed = purchaseController.processPurchase(userCommon, ticket, eopix);
@@ -192,7 +191,7 @@ class ControllerTest {
         }
     }
 
-    private Event createOrFetchEvent(User user,String name, String description, Date date) throws InvalidEventDateException, EventAlreadyExistsException, EventNotFoundException, UserNotAuthorizedException {
+    private Event createOrFetchEvent(User user,String name, String description, Date date) throws InvalidEventDateException, EventNotFoundException, UserNotAuthorizedException {
         try {
             Event event = new Event(name, description, date);
             return eventController.registerEvent(user, event);
