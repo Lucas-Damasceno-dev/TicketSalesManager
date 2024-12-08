@@ -28,17 +28,17 @@ public class Event {
     /**
      * The name of the event.
      */
-    private final String name;
+    private String name;
 
     /**
      * The description of the event.
      */
-    private final String description;
+    private String description;
 
     /**
      * The date on which the event will take place.
      */
-    private final Date date;
+    private Date date;
 
     /**
      * The list of available seats for the event.
@@ -53,7 +53,7 @@ public class Event {
     /**
      * Indicates whether the event is active, meaning it hasn't occurred yet.
      */
-    private final boolean isActive;
+    private boolean isActive;
 
     // Constructor
     /**
@@ -126,6 +126,73 @@ public class Event {
      */
     public List<EventFeedback> getFeedbacks() {
         return eventFeedbacks;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome do evento não pode ser vazio ou nulo.");
+        }
+        this.name = name;
+    }
+
+    /**
+     * Atualiza a descrição do evento.
+     *
+     * @param description A nova descrição do evento.
+     */
+    public void setDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("A descrição do evento não pode ser vazia ou nula.");
+        }
+        this.description = description;
+    }
+
+    /**
+     * Atualiza a data do evento.
+     *
+     * @param date A nova data do evento.
+     */
+    public void setDate(Date date) {
+        if (date == null || date.before(new Date())) {
+            throw new IllegalArgumentException("A data do evento deve ser futura e não pode ser nula.");
+        }
+        this.date = date;
+        this.isActive = !date.before(new Date()); // Atualiza o status de 'ativo'
+    }
+
+    /**
+     * Atualiza o status do evento.
+     *
+     * @param isActive Novo status do evento.
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    /**
+     * Define uma nova lista de assentos disponíveis.
+     *
+     * @param newAvailableSeats Lista de novos assentos.
+     */
+    public void setAvailableSeats(List<String> newAvailableSeats) {
+        if (newAvailableSeats == null) {
+            throw new IllegalArgumentException("A lista de assentos não pode ser nula.");
+        }
+        availableSeats.clear();
+        availableSeats.addAll(newAvailableSeats);
+    }
+
+    /**
+     * Define uma nova lista de feedbacks do evento.
+     *
+     * @param newFeedbacks Lista de novos feedbacks.
+     */
+    public void setFeedbacks(List<EventFeedback> newFeedbacks) {
+        if (newFeedbacks == null) {
+            throw new IllegalArgumentException("A lista de feedbacks não pode ser nula.");
+        }
+        eventFeedbacks.clear();
+        eventFeedbacks.addAll(newFeedbacks);
     }
 
     // Overridden Methods

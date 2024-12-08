@@ -15,11 +15,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Inicialize o StageController e o ScreensController
         stageController = new StageController(primaryStage);
         screensController = new ScreensController();
 
-        // Carregue a tela inicial usando a enum Screen
         Parent login = screensController.loadScreen(Scenes.LOGIN);
         stageController.changeStageContent(login);
     }

@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.EventDetailController">
     <VBox alignment="center" spacing="20" styleClass="event-detail-container">
+
         <!-- Título da Tela -->
-        <Label styleClass="screen-title" text="Detalhes do Evento" />
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" styleClass="screen-title" text="Detalhes do Evento" />
 
-        <!-- Container Principal -->
-        <HBox alignment="center" spacing="20">
-            <!-- Imagem do Evento -->
-            <ImageView fx:id="eventImage" fitHeight="200" fitWidth="200" preserveRatio="true" styleClass="event-image" />
-
-            <!-- Informações do Evento -->
-            <VBox alignment="CENTER_LEFT" spacing="15" styleClass="event-info">
-                <Label fx:id="eventName" styleClass="event-title" text="Nome do Evento" />
-                <Label fx:id="eventDate" styleClass="event-date" text="Data: 01/12/2024" />
-                <Label fx:id="eventStatus" styleClass="event-status" text="Status: Ativo" />
-                <Label fx:id="eventDescription" styleClass="event-description" text="Descrição detalhada do evento." wrapText="true" />
-            </VBox>
-        </HBox>
-
-        <!-- Informações de Assentos -->
-        <GridPane alignment="center" hgap="10" styleClass="seat-info" vgap="10">
-            <Label styleClass="section-title" text="Assentos Disponíveis:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <ListView fx:id="availableSeatsList" prefHeight="100" prefWidth="200" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <Button fx:id="btnReserveSeat" onAction="#handleReserveSeat" styleClass="primary-button" text="Reservar Assento" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-         <columnConstraints>
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
-        </GridPane>
-
-        <!-- Feedbacks do Evento -->
-        <VBox alignment="center" spacing="10" styleClass="feedback-section">
-            <Label styleClass="section-title" text="Feedbacks do Evento:" />
-            <ListView fx:id="feedbackList" prefHeight="150" prefWidth="400" />
-            <Button fx:id="btnAddFeedback" onAction="#handleAddFeedback" styleClass="primary-button" text="Adicionar Feedback" />
+        <!-- Informações do Evento -->
+        <VBox alignment="CENTER" spacing="15" styleClass="event-info">
+            <TextField fx:id="eventName" styleClass="event-title" promptText="Nome do Evento" />
+            <TextField fx:id="eventDate" styleClass="event-date" promptText="Data do Evento" />
+            <TextField fx:id="eventStatus" styleClass="event-status" promptText="Status do Evento" />
+            <TextArea fx:id="eventDescription" styleClass="event-description" promptText="Descrição detalhada do evento." />
         </VBox>
 
-        <!-- Botão Voltar -->
-        <Button fx:id="btnBack" onAction="#handleOnBack" styleClass="secondary-button" text="Voltar" />
+        <!-- Informações de Assentos -->
+        <VBox alignment="CENTER" spacing="15" styleClass="seat-info">
+            <Label styleClass="section-title" text="Assentos Disponíveis" />
+            <ListView fx:id="availableSeatsList" prefHeight="120" prefWidth="300" />
+            <Button fx:id="btnReserveSeat" text="Reservar Assento" onAction="#handleReserveSeat" />
+
+            <TextField fx:id="seatCountField" promptText="Quantidade de Assentos" visible="false"/>
+        </VBox>
+
+        <!-- Avaliações do Evento -->
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Avaliação do Evento" />
+
+        <!-- Feedbacks Existentes -->
+        <ListView fx:id="feedbackListView" prefHeight="150" />
+
+        <!-- Formulário de Feedback -->
+        <VBox alignment="CENTER" spacing="15">
+            <Label text="Deixe sua avaliação:" />
+
+            <HBox alignment="CENTER" spacing="15">
+                <Label text="Nota:" />
+                <Slider fx:id="ratingSlider" min="0" max="5" blockIncrement="0.5" showTickLabels="true" showTickMarks="true" majorTickUnit="1" minorTickCount="4" />
+            </HBox>
+
+            <Label text="Comentário:" />
+            <TextArea fx:id="commentTextArea" promptText="Escreva seu comentário aqui..." prefRowCount="4" wrapText="true" />
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Salvar" onAction="#handleSaveFeedback"> </Button>
+                <Button text="Cancelar" onAction="#handleCancelFeedback"> </Button>
+            </HBox>
+        </VBox>
     </VBox>
 </StackPane>

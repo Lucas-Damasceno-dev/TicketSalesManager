@@ -80,6 +80,25 @@ public class EventController {
     }
 
     /**
+     * Updates an event in the system.
+     *
+     * @param event The event with updated data.
+     * @throws EventNotFoundException If the event is not found.
+     * @throws EventUpdateException If the event cannot be updated.
+     */
+    public void updateEvent(Event event) throws EventNotFoundException, EventUpdateException {
+        Event existingEvent = eventDAO.findEventByName(event.getName());
+        if (existingEvent == null) {
+            throw new EventNotFoundException(event.getName());
+        }
+        boolean updated = eventDAO.updateEvent(event);
+        if (!updated) {
+            throw new EventUpdateException(event.getName(), "Não foi possível atualizar o evento.");
+        }
+    }
+
+
+    /**
      * Adds a seat to an existing event.
      *
      * @param eventName The name of the event.

@@ -1,54 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollBar?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox styleClass="main-content" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <!-- Seção de Eventos Recentes -->
    <Label styleClass="section-title" text="🆕 Eventos Recentes" />
-   <HBox alignment="center" spacing="20" stylesheets="@/com/lucas/ticketsalesmanager/styles/main.css">
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage1" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle1" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 1" />
-         <Label fx:id="eventDate1" style="-fx-font-size: 12px;" text="01/12/2024" />
-         <Label fx:id="eventDescription1" style="-fx-font-size: 12px;" text="Descrição do Evento 1" />
-      </VBox>
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage2" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle2" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 2" />
-         <Label fx:id="eventDate2" style="-fx-font-size: 12px;" text="05/12/2024" />
-         <Label fx:id="eventDescription2" style="-fx-font-size: 12px;" text="Descrição do Evento 2" />
-      </VBox>
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage3" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle3" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 3" />
-         <Label fx:id="eventDate3" style="-fx-font-size: 12px;" text="10/12/2024" />
-         <Label fx:id="eventDescription3" style="-fx-font-size: 12px;" text="Descrição do Evento 3" />
-      </VBox>
-   </HBox>
-   <ScrollBar />
+   <ListView fx:id="listViewRecentEvents" prefHeight="250.0" styleClass="event-list">
+
+   </ListView>
+
+   <!-- Seção de Próximos Eventos -->
    <Label styleClass="section-title" text="📅 Próximos Eventos" />
-   <HBox alignment="center" spacing="20" stylesheets="@/com/lucas/ticketsalesmanager/styles/main.css">
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage11" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle11" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 1" />
-         <Label fx:id="eventDate11" style="-fx-font-size: 12px;" text="01/12/2024" />
-         <Label fx:id="eventDescription11" style="-fx-font-size: 12px;" text="Descrição do Evento 1" />
-      </VBox>
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage21" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle21" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 2" />
-         <Label fx:id="eventDate21" style="-fx-font-size: 12px;" text="05/12/2024" />
-         <Label fx:id="eventDescription21" style="-fx-font-size: 12px;" text="Descrição do Evento 2" />
-      </VBox>
-      <VBox alignment="center" prefHeight="200.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px; -fx-border-color: #ddd;">
-         <ImageView fx:id="eventImage31" fitHeight="120" fitWidth="120" preserveRatio="true" />
-         <Label fx:id="eventTitle31" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Evento 3" />
-         <Label fx:id="eventDate31" style="-fx-font-size: 12px;" text="10/12/2024" />
-         <Label fx:id="eventDescription31" style="-fx-font-size: 12px;" text="Descrição do Evento 3" />
-      </VBox>
-   </HBox>
-   <ScrollBar />
+   <ListView fx:id="listViewUpcomingEvents" prefHeight="250.0" styleClass="event-list">
+
+   </ListView>
 </VBox>
