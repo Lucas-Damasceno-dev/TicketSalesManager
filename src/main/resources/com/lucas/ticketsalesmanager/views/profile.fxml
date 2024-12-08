@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.ProfileController">
+    <!-- Seção do Perfil -->
+    <VBox alignment="TOP_CENTER" layoutX="20.0" layoutY="20.0" spacing="20">
+        <!-- Cabeçalho -->
+        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Perfil do Usuário" />
+
+        <!-- Informações do Usuário -->
+        <GridPane alignment="CENTER" hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" minWidth="100.0" prefWidth="150.0" />
+                <ColumnConstraints minWidth="200.0" prefWidth="400.0" />
+            </columnConstraints>
+            <!-- Nome -->
+            <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="txtName" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <!-- CPF -->
+            <Label text="CPF:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="txtCpf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <!-- Email -->
+            <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="txtEmail" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <!-- Login -->
+            <Label text="Login:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="txtLogin" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <!-- Senha -->
+            <Label text="Senha:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <PasswordField fx:id="txtPassword" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+        </GridPane>
+
+        <!-- Botões de Ação -->
+        <HBox alignment="CENTER" spacing="20">
+            <Button fx:id="btnEdit" onAction="#handleEdit" text="Editar" />
+            <Button fx:id="btnSave" onAction="#handleSave" text="Salvar" />
+            <Button fx:id="btnCancel" onAction="#handleCancel" text="Cancelar" />
+        </HBox>
+    </VBox>
+     <TableView fx:id="tableTickets" layoutX="76.0" layoutY="339.0" prefHeight="291.0" prefWidth="452.0">
+         <columns>
+             <TableColumn fx:id="columnEvent" prefWidth="150.0" text="Evento" />
+             <TableColumn fx:id="columnDate" prefWidth="150.0" text="Data" />
+             <TableColumn fx:id="columnSeat" prefWidth="150.0" text="Assento" />
+         </columns>
+     </TableView>
+     <Label layoutX="241.0" layoutY="305.0" style="-fx-font-size: 18px;" text="Ingressos" />
+</AnchorPane>

@@ -260,6 +260,6 @@ public class User {
      * @return {@code true} if the credentials are correct, {@code false} otherwise.
      */
     public boolean login(String login, String password) {
-        return User.this.login.equals(login) && User.this.password.equals(password);
+        return this.login.equals(login) && this.password.equals(password);
     }
 }

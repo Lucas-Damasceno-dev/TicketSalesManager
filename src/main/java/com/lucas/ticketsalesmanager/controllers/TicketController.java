@@ -20,6 +20,9 @@ import com.lucas.ticketsalesmanager.exception.ticket.*;
 import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
 import com.lucas.ticketsalesmanager.persistence.TicketDAO;
 import jakarta.mail.MessagingException;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 import java.util.List;
 
