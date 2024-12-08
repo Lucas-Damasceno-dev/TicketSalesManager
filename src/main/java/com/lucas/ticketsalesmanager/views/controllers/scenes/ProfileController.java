@@ -1,25 +1,25 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 import com.lucas.ticketsalesmanager.Main;
+import com.lucas.ticketsalesmanager.exception.ticket.*;
 import com.lucas.ticketsalesmanager.exception.user.UserNotFoundException;
 import com.lucas.ticketsalesmanager.exception.user.UserUpdateException;
+import com.lucas.ticketsalesmanager.models.Ticket;
 import com.lucas.ticketsalesmanager.models.User;
-import com.lucas.ticketsalesmanager.views.controllers.ScreensController;
-import com.lucas.ticketsalesmanager.views.controllers.StageController;
+import com.lucas.ticketsalesmanager.controllers.TicketController;
 import com.lucas.ticketsalesmanager.controllers.UserController;
+import com.lucas.ticketsalesmanager.views.controllers.ScreensController;
 
-import static com.lucas.ticketsalesmanager.views.controllers.scenes.LoginController.user;
-import static javafx.scene.control.Alert.AlertType.ERROR;
-
-import com.lucas.ticketsalesmanager.views.controllers.scenes.util.UserTickets;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.stream.Collectors;
+import java.util.List;
+
+import static com.lucas.ticketsalesmanager.Main.stageController;
+import static javafx.scene.control.Alert.AlertType.ERROR;
 
 public class ProfileController {
 
@@ -35,48 +35,69 @@ public class ProfileController {
     private PasswordField txtPassword;
 
     @FXML
-    private TableView<UserTickets> tableTickets;
+    private TableView<Ticket> tableTickets;
     @FXML
-    private TableColumn<UserTickets, String> columnEvent;
+    private TableColumn<Ticket, String> columnEvent;
     @FXML
-    private TableColumn<UserTickets, String> columnDate;
+    private TableColumn<Ticket, String> columnDate;
     @FXML
-    private TableColumn<UserTickets, String> columnSeat;
+    private TableColumn<Ticket, String> columnSeat;
+    @FXML
+    private TableColumn<Ticket, String> columnPrice;
+    @FXML
+    private TableColumn<Ticket, String> columnStatus;
 
-    private ObservableList<UserTickets> ticketList;
+    @FXML
+    private Button btnCancelTicket;
+    @FXML
+    private Button btnReactiveTicket;
 
-    private StageController stageController;
-    private ScreensController screensController;
+    private ObservableList<Ticket> ticketList;
+    private TicketController ticketController;
     private UserController userController;
+    private ScreensController screensController;
+    private User user;
 
     @FXML
     private void initialize() {
-        stageController = Main.stageController;
-        screensController = new ScreensController();
+        ticketController = new TicketController();
         userController = new UserController();
+        screensController = new ScreensController();
 
-        fillUserInfo(user);
+        configureTableColumns();
+        loadUserProfile(LoginController.user);
+        setupButtonActions();
+    }
 
-        ticketList = FXCollections.observableArrayList(
-                user.getTickets().stream()
-                        .map(ticket -> new UserTickets(
-                                ticket.getEvent().getName(),
-                                ticket.getEvent().getDate(),
-                                ticket.getSeat()))
-                        .collect(Collectors.toList())
+    private void configureTableColumns() {
+        columnEvent.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getEvent().getName())
         );
 
-        columnEvent.setCellValueFactory(cellData -> cellData.getValue().eventNameProperty());
-
         columnDate.setCellValueFactory(cellData -> {
-            Date date = cellData.getValue().getEventDate();
-            String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
-            return new javafx.beans.property.SimpleStringProperty(formattedDate);
+            String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(cellData.getValue().getEvent().getDate());
+            return new SimpleStringProperty(formattedDate);
         });
 
-        columnSeat.setCellValueFactory(cellData -> cellData.getValue().eventSeatProperty());
+        columnSeat.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getSeat())
+        );
 
+        columnPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.format("R$ %.2f", cellData.getValue().getPrice()))
+        );
+
+        columnStatus.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().isActive() ? "Ativo" : "Cancelado")
+        );
+
+        ticketList = FXCollections.observableArrayList();
         tableTickets.setItems(ticketList);
+    }
+
+    public void loadUserProfile(User user) {
+        fillUserInfo(user);
+        refreshTicketList();
     }
 
     public void fillUserInfo(User user) {
@@ -101,26 +122,88 @@ public class ProfileController {
             userController.updateUser(user, "name", name);
             userController.updateUser(user, "email", email);
             userController.updateUser(user, "login", login);
+            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Informações atualizadas com sucesso.");
         } catch (UserNotFoundException | UserUpdateException e) {
-            e.printStackTrace();
-            stageController.showAlert(ERROR, "ERRO", "Não foi possível atualizar as informações do usuário.");
+            stageController.showAlert(ERROR, "Erro", "Não foi possível atualizar as informações do usuário.");
         } catch (Exception e) {
-            e.printStackTrace();
-            stageController.showAlert(ERROR, "ERRO", "Ocorreu um erro inesperado.");
+            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
         }
 
         setEditableTextField(false);
     }
 
-
     public void handleEdit() {
         setEditableTextField(true);
     }
-
 
     public void setEditableTextField(boolean bool) {
         txtName.setEditable(bool);
         txtEmail.setEditable(bool);
         txtLogin.setEditable(bool);
     }
+
+    public void handleCancelTicket() {
+        Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
+        if (selectedTicket == null) {
+            stageController.showAlert(Alert.AlertType.WARNING, "Aviso", "Nenhum ticket selecionado.");
+            return;
+        }
+
+        try {
+            ticketController.cancelTicket(user, selectedTicket);
+            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket cancelado com sucesso.");
+            refreshTicketList();
+        } catch (TicketNotCancelableException | TicketAlreadyCanceledException | TicketNotFoundException e) {
+            stageController.showAlert(ERROR, "Erro", e.getMessage());
+        } catch (Exception e) {
+            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
+        }
+    }
+
+    public void handleReactiveTicket() {
+        Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
+        if (selectedTicket == null) {
+            stageController.showAlert(Alert.AlertType.WARNING, "Aviso", "Nenhum ticket selecionado.");
+            return;
+        }
+
+        try {
+            ticketController.reactivateTicket(user, selectedTicket);
+            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket reativado com sucesso.");
+            refreshTicketList();
+        } catch (TicketAlreadyReactivatedException | TicketNotFoundException e) {
+            stageController.showAlert(ERROR, "Erro", e.getMessage());
+        } catch (Exception e) {
+            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
+        }
+    }
+
+    private void refreshTicketList() {
+        try {
+            List<Ticket> tickets = ticketController.listPurchasedTickets(LoginController.user);
+            ticketList.setAll(tickets);
+        } catch (Exception e) {
+            e.printStackTrace();
+            stageController.showAlert(ERROR, "Erro", "Erro ao atualizar a lista de tickets.");
+        }
+    }
+
+    private void setupButtonActions() {
+        btnCancelTicket.setOnAction(event -> {
+            try {
+                handleCancelTicket();
+            } catch (Exception e) {
+                stageController.showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
+            }
+        });
+
+        btnReactiveTicket.setOnAction(event -> {
+            try {
+                handleReactiveTicket();
+            } catch (Exception e) {
+                stageController.showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
+            }
+        });
+    }
 }
+

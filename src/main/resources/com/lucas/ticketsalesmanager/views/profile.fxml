@@ -25,32 +25,29 @@
                 <ColumnConstraints halignment="CENTER" minWidth="100.0" prefWidth="150.0" />
                 <ColumnConstraints minWidth="200.0" prefWidth="400.0" />
             </columnConstraints>
-            <!-- Nome -->
+
             <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextField fx:id="txtName" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-            <!-- CPF -->
             <Label text="CPF:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="txtCpf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <!-- Email -->
             <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <TextField fx:id="txtEmail" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <!-- Login -->
-            <Label text="Login:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Label text="Login:" GridPane.rowIndex="3" />
             <TextField fx:id="txtLogin" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <!-- Senha -->
-            <Label text="Senha:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Label text="Senha:" GridPane.rowIndex="4" />
             <PasswordField fx:id="txtPassword" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
+
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
         </GridPane>
 
         <!-- Botões de Ação -->
@@ -60,12 +57,23 @@
             <Button fx:id="btnCancel" onAction="#handleCancel" text="Cancelar" />
         </HBox>
     </VBox>
-     <TableView fx:id="tableTickets" layoutX="76.0" layoutY="339.0" prefHeight="291.0" prefWidth="452.0">
-         <columns>
-             <TableColumn fx:id="columnEvent" prefWidth="150.0" text="Evento" />
-             <TableColumn fx:id="columnDate" prefWidth="150.0" text="Data" />
-             <TableColumn fx:id="columnSeat" prefWidth="150.0" text="Assento" />
-         </columns>
-     </TableView>
-     <Label layoutX="241.0" layoutY="305.0" style="-fx-font-size: 18px;" text="Ingressos" />
+
+    <!-- Seção de Ingressos -->
+    <Label layoutX="241.0" layoutY="305.0" style="-fx-font-size: 18px;" text="Ingressos" />
+
+    <TableView fx:id="tableTickets" layoutX="20.0" layoutY="340.0" prefHeight="250.0" prefWidth="600.0">
+        <columns>
+            <TableColumn fx:id="columnEvent" text="Evento" prefWidth="150.0" />
+            <TableColumn fx:id="columnDate" text="Data" prefWidth="100.0" />
+            <TableColumn fx:id="columnSeat" text="Assento" prefWidth="100.0" />
+            <TableColumn fx:id="columnPrice" text="Preço" prefWidth="100.0" />
+            <TableColumn fx:id="columnStatus" text="Status" prefWidth="100.0" />
+        </columns>
+    </TableView>
+
+    <!-- Botões de Ação de Tickets -->
+    <HBox alignment="CENTER" layoutX="200.0" layoutY="600.0" spacing="20">
+        <Button fx:id="btnCancelTicket" text="Cancelar Ticket" />
+        <Button fx:id="btnReactiveTicket" text="Reativar Ticket" />
+    </HBox>
 </AnchorPane>

@@ -24,9 +24,8 @@
 
     <!-- Botões de Ações -->
     <HBox alignment="CENTER" spacing="10">
-        <Button fx:id="btnCancelTicket" onAction="#handleCancelTicket" text="Cancelar Ticket" />
-        <Button fx:id="btnReactiveTicket" onAction="#handleReactiveTicket" text="Reativar Ticket" />
-        <Button fx:id="btnUpdateList" onAction="#handleUpdateTicket" text="Atualizar Lista" />
+        <Button fx:id="btnCancelTicket" text="Cancelar Ticket" />
+        <Button fx:id="btnReactiveTicket" text="Reativar Ticket" />
     </HBox>
 
     <!-- Mensagem de Feedback -->

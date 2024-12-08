@@ -19,7 +19,7 @@ import static com.lucas.ticketsalesmanager.views.controllers.scenes.util.Scenes.
 public class DashboardController {
 
     public TextField searchField;
-    public Button btnTickets;
+    public Button btnDashboard;
     public Button btnEvents;
     public Button btnProfile;
     public Button btnLogout;
@@ -38,6 +38,15 @@ public class DashboardController {
 
         Parent eventList = screensController.loadScreen(EVENT_LIST);
         stackPane.getChildren().setAll(eventList);
+
+        btnDashboard.setOnAction(event -> {
+            try {
+                handleDashboardClick();
+            } catch (Exception e) {
+                stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Erro",
+                        e.getMessage());
+            }
+        });
 
         btnEvents.setOnAction(event -> {
             try {
@@ -71,15 +80,6 @@ public class DashboardController {
                         e.getMessage());
             }
         });
-
-        btnTickets.setOnAction(event -> {
-            try {
-                handleTicketsClick();
-            } catch (Exception e) {
-                stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Erro",
-                        e.getMessage());
-            }
-        });
     }
 
     public void setStageController(StageController stageController) {
@@ -88,6 +88,17 @@ public class DashboardController {
 
     public void setScreensController(ScreensController screensController) {
         this.screensController = screensController;
+    }
+
+    public void handleDashboardClick() {
+        try {
+            Parent dashboardScreen = screensController.loadScreen(EVENT_LIST);
+            stackPane.getChildren().setAll(dashboardScreen);
+        } catch (Exception e) {
+            e.printStackTrace();
+            stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
+                    "Erro", "Não foi possível carregar a dashaboard.");
+        }
     }
 
     public void handleProfileClick() {
@@ -126,7 +137,6 @@ public class DashboardController {
 
 
     public void handleLogoutClick() {
-        System.out.println("Saindo do sistema...");
         stageController.closeStage();
     }
 
