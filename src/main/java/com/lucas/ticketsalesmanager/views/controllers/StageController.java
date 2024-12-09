@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class StageController {
@@ -28,7 +29,7 @@ public class StageController {
         });
     }
 
-    public void showAlert(Alert.AlertType type, String title, String message) {
+    public void showAlert(AlertType type, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type);
             alert.setTitle(title);

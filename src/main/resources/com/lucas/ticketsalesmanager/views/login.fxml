@@ -9,13 +9,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane stylesheets="/com/lucas/ticketsalesmanager/styles/main.css"
-           xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.LoginController">
+<StackPane stylesheets="/com/lucas/ticketsalesmanager/styles/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.LoginController">
     <VBox alignment="center" spacing="20" styleClass="login-signup-container">
         <Label styleClass="form-title" text="Login" />
         <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" styleClass="input-field" />
-        <PasswordField fx:id="passwordField" promptText="Digite sua senha" styleClass="input-field" />
+        <PasswordField fx:id="passwordField" onKeyPressed="#onKeyPressed" promptText="Digite sua senha" styleClass="input-field" />
         <Button fx:id="btnLogin" onAction="#handleLogin" styleClass="submit-button" text="Entrar" />
         <HBox alignment="CENTER">
             <Label styleClass="form-footer" text="Não tem uma conta?" />

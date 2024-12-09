@@ -1,6 +1,5 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
-import com.lucas.ticketsalesmanager.Main;
 import com.lucas.ticketsalesmanager.exception.ticket.*;
 import com.lucas.ticketsalesmanager.exception.user.UserNotFoundException;
 import com.lucas.ticketsalesmanager.exception.user.UserUpdateException;
@@ -20,6 +19,8 @@ import java.util.List;
 
 import static com.lucas.ticketsalesmanager.Main.stageController;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
+import static javafx.scene.control.Alert.AlertType.WARNING;
 
 public class ProfileController {
 
@@ -57,15 +58,20 @@ public class ProfileController {
     private UserController userController;
     private ScreensController screensController;
     private User user;
-
     @FXML
-    private void initialize() {
+    private Button btnEdit;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnCancel;
+
+    public void initialize() {
         ticketController = new TicketController();
         userController = new UserController();
         screensController = new ScreensController();
-
+        user = LoginController.user;
         configureTableColumns();
-        loadUserProfile(LoginController.user);
+        loadUserProfile(user);
         setupButtonActions();
     }
 
@@ -108,11 +114,13 @@ public class ProfileController {
         txtPassword.setText(user.getPassword());
     }
 
+    @FXML
     public void handleCancel() {
         fillUserInfo(user);
         setEditableTextField(false);
     }
 
+    @FXML
     public void handleSave() {
         String name = txtName.getText();
         String email = txtEmail.getText();
@@ -122,59 +130,54 @@ public class ProfileController {
             userController.updateUser(user, "name", name);
             userController.updateUser(user, "email", email);
             userController.updateUser(user, "login", login);
-            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Informações atualizadas com sucesso.");
+            stageController.showAlert(INFORMATION, "Sucesso", "Informações atualizadas com sucesso.");
         } catch (UserNotFoundException | UserUpdateException e) {
             stageController.showAlert(ERROR, "Erro", "Não foi possível atualizar as informações do usuário.");
-        } catch (Exception e) {
-            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
         }
 
         setEditableTextField(false);
     }
 
+    @FXML
     public void handleEdit() {
         setEditableTextField(true);
     }
 
-    public void setEditableTextField(boolean bool) {
-        txtName.setEditable(bool);
-        txtEmail.setEditable(bool);
-        txtLogin.setEditable(bool);
+    public void setEditableTextField(boolean editable) {
+        txtName.setEditable(editable);
+        txtEmail.setEditable(editable);
+        txtLogin.setEditable(editable);
     }
 
     public void handleCancelTicket() {
         Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
-            stageController.showAlert(Alert.AlertType.WARNING, "Aviso", "Nenhum ticket selecionado.");
+            stageController.showAlert(WARNING, "Aviso", "Nenhum ticket selecionado.");
             return;
         }
 
         try {
             ticketController.cancelTicket(user, selectedTicket);
-            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket cancelado com sucesso.");
+            stageController.showAlert(INFORMATION, "Sucesso", "Ticket cancelado com sucesso.");
             refreshTicketList();
         } catch (TicketNotCancelableException | TicketAlreadyCanceledException | TicketNotFoundException e) {
             stageController.showAlert(ERROR, "Erro", e.getMessage());
-        } catch (Exception e) {
-            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
         }
     }
 
     public void handleReactiveTicket() {
         Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
-            stageController.showAlert(Alert.AlertType.WARNING, "Aviso", "Nenhum ticket selecionado.");
+            stageController.showAlert(WARNING, "Aviso", "Nenhum ticket selecionado.");
             return;
         }
 
         try {
             ticketController.reactivateTicket(user, selectedTicket);
-            stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket reativado com sucesso.");
+            stageController.showAlert(INFORMATION, "Sucesso", "Ticket reativado com sucesso.");
             refreshTicketList();
-        } catch (TicketAlreadyReactivatedException | TicketNotFoundException e) {
+        } catch (TicketAlreadyReactivatedException | InvalidTicketException | TicketNotFoundException e) {
             stageController.showAlert(ERROR, "Erro", e.getMessage());
-        } catch (Exception e) {
-            stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
         }
     }
 
@@ -183,7 +186,6 @@ public class ProfileController {
             List<Ticket> tickets = ticketController.listPurchasedTickets(LoginController.user);
             ticketList.setAll(tickets);
         } catch (Exception e) {
-            e.printStackTrace();
             stageController.showAlert(ERROR, "Erro", "Erro ao atualizar a lista de tickets.");
         }
     }
@@ -193,7 +195,7 @@ public class ProfileController {
             try {
                 handleCancelTicket();
             } catch (Exception e) {
-                stageController.showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
+                stageController.showAlert(ERROR, "Erro", e.getMessage());
             }
         });
 
@@ -201,7 +203,7 @@ public class ProfileController {
             try {
                 handleReactiveTicket();
             } catch (Exception e) {
-                stageController.showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
+                stageController.showAlert(ERROR, "Erro", e.getMessage());
             }
         });
     }

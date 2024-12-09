@@ -20,6 +20,7 @@ import java.util.List;
 
 import static com.lucas.ticketsalesmanager.Main.stageController;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.WARNING;
 
 public class TicketsController {
 
@@ -43,8 +44,8 @@ public class TicketsController {
     private TicketController ticketController;
     private ObservableList<Ticket> observableTicketList;
     private User user;
-
-    @FXML
+    
+    
     private void initialize() {
         this.ticketController = new TicketController();
         this.observableTicketList = FXCollections.observableArrayList();
@@ -54,26 +55,24 @@ public class TicketsController {
     }
 
     private void configureTableColumns() {
-        eventColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getEvent().getName())
+        eventColumn.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().getEvent().getName())
         );
 
-        priceColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(String.format("R$ %.2f", cellData.getValue().getPrice()))
+        priceColumn.setCellValueFactory(cellData
+                -> new SimpleStringProperty(String.format("R$ %.2f", cellData.getValue().getPrice()))
         );
 
-        seatColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getSeat())
+        seatColumn.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().getSeat())
         );
 
-        statusColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().isActive() ? "Ativo" : "Cancelado")
+        statusColumn.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().isActive() ? "Ativo" : "Cancelado")
         );
 
         ticketTable.setItems(observableTicketList);
     }
-
-
 
     public void loadUserTickets() {
         List<Ticket> tickets = ticketController.listPurchasedTickets(LoginController.user);
@@ -83,7 +82,7 @@ public class TicketsController {
     public void handleCancelTicket() {
         Ticket selectedTicket = ticketTable.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
-            stageController.showAlert(Alert.AlertType.WARNING, "Aviso", "Nenhum ticket selecionado.");
+            stageController.showAlert(WARNING, "Aviso", "Nenhum ticket selecionado.");
             return;
         }
 
@@ -92,13 +91,10 @@ public class TicketsController {
             stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket cancelado com sucesso.");
             observableTicketList.setAll(ticketController.listPurchasedTickets(user));
         } catch (TicketNotCancelableException | TicketAlreadyCanceledException | TicketNotFoundException e) {
-        Main.stageController.showAlert(ERROR, "Erro", e.getMessage());
-    } catch (Exception e) {
-        Main.stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
-    }
+            Main.stageController.showAlert(ERROR, "Erro", e.getMessage());
+        }
     }
 
-    
     public void handleReactiveTicket() throws InvalidTicketException {
         Ticket selectedTicket = ticketTable.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
@@ -111,8 +107,8 @@ public class TicketsController {
             stageController.showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Ticket reativado com sucesso.");
             observableTicketList.setAll(ticketController.listPurchasedTickets(user));
         } catch (TicketAlreadyReactivatedException | TicketNotFoundException e) {
-        Main.stageController.showAlert(ERROR, "Erro", e.getMessage());
-        } catch (Exception e) {
+            Main.stageController.showAlert(ERROR, "Erro", e.getMessage());
+        } catch (InvalidTicketException e) {
             Main.stageController.showAlert(ERROR, "Erro", "Ocorreu um erro inesperado.");
         }
     }

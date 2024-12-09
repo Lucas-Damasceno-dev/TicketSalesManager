@@ -6,13 +6,15 @@ import com.lucas.ticketsalesmanager.views.controllers.scenes.util.Scenes;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScreensController {
 
     private final Map<Scenes, Parent> scenessCache = new HashMap<>();
     private Scenes lastScenesLoaded;
-    private static final String BASE_PATH =
-            System.getProperty("views.base.path", "/com/lucas/ticketsalesmanager/views/");
+    private static final String BASE_PATH
+            = System.getProperty("views.base.path", "/com/lucas/ticketsalesmanager/views/");
 
     public ScreensController() {
         this.lastScenesLoaded = null;
@@ -52,6 +54,11 @@ public class ScreensController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(BASE_PATH + scenes.getFileName()));
         loader.load();
         return loader.getController();
+    }
+
+    public FXMLLoader getLoader(Scenes scenes) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(BASE_PATH + scenes.getFileName()));
+        return loader;
     }
 
     public void clearCache() {

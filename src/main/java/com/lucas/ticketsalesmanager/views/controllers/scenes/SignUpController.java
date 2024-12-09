@@ -1,6 +1,7 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 
+import com.lucas.ticketsalesmanager.Main;
 import com.lucas.ticketsalesmanager.exception.user.UserAlreadyExistsException;
 import com.lucas.ticketsalesmanager.exception.user.UserDAOException;
 import javafx.fxml.FXML;
@@ -14,6 +15,9 @@ import com.lucas.ticketsalesmanager.views.controllers.ScreensController;
 import com.lucas.ticketsalesmanager.controllers.UserController;
 
 import java.io.IOException;
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 
 public class SignUpController {
@@ -34,15 +38,16 @@ public class SignUpController {
     private ScreensController screensController;
 
     private UserController userController;
-
     @FXML
-    private void initialize() {
-        screensController = new ScreensController();
+    private Button btnSignUp;
+
+    public void initialize() {
+        screensController = Main.screensController;
         userController = new UserController();
     }
 
     @FXML
-    private void onSignUp() throws UserAlreadyExistsException, UserDAOException, IOException {
+    public void onSignUp() {
         String username = usernameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -52,23 +57,44 @@ public class SignUpController {
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()
                 || confirmPassword.isEmpty() || name.isEmpty() || cpf.isEmpty()) {
-            stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
+            stageController.showAlert(ERROR,
                     "Erro", "Preencha todos os campos.");
             return;
         }
-
-        userController.registerUser(username, password, name, cpf, email, false);
-        stageController.changeStageContent(screensController.loadScreen(LOGIN));
+        if(!password.equals(confirmPassword))
+        {
+            stageController.showAlert(ERROR,
+                    "Erro", "As senhas digitadas não são iguais");
+            return;
+        }
+        
+        boolean isAdmin = username.equals("admin") && password.equals("admin");
+            
+        try {
+            userController.registerUser(username, password, name, cpf, email, isAdmin);
+            stageController.changeStageContent(screensController.loadScreen(LOGIN));
+        } catch (UserAlreadyExistsException | UserDAOException ex) {
+           stageController.showAlert(ERROR, "Erro", ex.getMessage());
+        } catch (IOException ex) {
+            stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
+                    "Erro", "Não foi possível carregar a tela de login.");
+        }
     }
 
     @FXML
-    private void onBackToLogin() {
+    public void onBackToLogin() {
         try {
             stageController.changeStageContent(screensController.loadScreen(LOGIN));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
-                    "Erro", "Não foi possível carregar a tela de cadastro.");
+                    "Erro", "Não foi possível carregar a tela de login.");
+        }
+    }
+
+    @FXML
+    private void confirmPasswordOnKeyPressed(KeyEvent event) {
+        if(event.getCode().equals(KeyCode.ENTER)){
+            this.onSignUp();
         }
     }
 }

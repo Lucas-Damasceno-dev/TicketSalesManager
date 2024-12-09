@@ -11,12 +11,12 @@
 
 <HBox fx:id="hboxRoot" prefHeight="800.0" prefWidth="1000.0" styleClass="main-container" stylesheets="/com/lucas/ticketsalesmanager/styles/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.DashboardController">
     <!-- Barra Lateral Esquerda -->
-    <VBox spacing="25.0" styleClass="sidebar" VBox.vgrow="ALWAYS">
+    <VBox prefHeight="840.0" prefWidth="200.0" spacing="25.0" styleClass="sidebar" VBox.vgrow="ALWAYS">
         <Label styleClass="logo" text="🎟 TicketManager" />
-        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleProfileClick" styleClass="menu-button" text="👤 Dashboard" />
-        <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#handleProfileClick" styleClass="menu-button" text="👤 Perfil" />
-        <Button fx:id="btnEvents" mnemonicParsing="false" onAction="#handleEventsClick" styleClass="menu-button" text="🎉 Eventos" />
-        <Button fx:id="btnTickets" mnemonicParsing="false" onAction="#handleTicketsClick" styleClass="menu-button" text="🎫 Ingressos" />
+        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleDashboardClick" prefHeight="17.0" prefWidth="172.0" styleClass="menu-button" text="👤 Dashboard" />
+        <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#handleProfileClick" prefHeight="17.0" prefWidth="165.0" styleClass="menu-button" text="👤 Perfil" />
+        <Button fx:id="btnTickets" mnemonicParsing="false" onAction="#handleTicketsClick" prefHeight="17.0" prefWidth="154.0" styleClass="menu-button" text="🎫 Ingressos" />
+        <Button fx:id="btnEvents" mnemonicParsing="false" onAction="#handleEventsClick" prefHeight="17.0" prefWidth="150.0" styleClass="menu-button" text="🎉 Eventos" />
         <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogoutClick" styleClass="menu-button" text="🚪 Sair">
             <VBox.margin>
                 <Insets top="609.0" />
@@ -26,10 +26,25 @@
     <VBox>
         <!-- Barra Superior -->
         <HBox alignment="center" prefHeight="26.0" prefWidth="890.0" spacing="10" styleClass="top-bar">
-            <TextField fx:id="searchField" promptText="🔍 Buscar eventos..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="searchField" onKeyPressed="#shearchOnKeyPressed" promptText="🔍 Buscar eventos..." styleClass="search-field" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearchClick" styleClass="search-button" text="Pesquisar" />
-           <ChoiceBox />
+           <ChoiceBox fx:id="choiceLanguage" />
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="10.0" right="10.0" />
+         </padding>
         </HBox>
-        <StackPane fx:id="stackPane" prefHeight="775.0" prefWidth="310.0" />
+        <StackPane fx:id="stackPane" prefHeight="775.0" prefWidth="310.0">
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin></StackPane>
+      <HBox.margin>
+         <Insets />
+      </HBox.margin>
     </VBox>
+   <padding>
+      <Insets bottom="10.0" right="10.0" top="10.0" />
+   </padding>
 </HBox>

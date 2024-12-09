@@ -8,9 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" spacing="5.0" styleClass="login-signup-container"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.SignUpController">
+<VBox alignment="TOP_CENTER" spacing="5.0" styleClass="login-signup-container" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.SignUpController">
    <children>
       <Label styleClass="form-title" text="Cadastro de Conta" />
       <HBox alignment="CENTER">
@@ -46,7 +44,7 @@
       <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefWidth="350.0">
          <children>
             <Label text="Confirmaçao de Senha:" />
-            <PasswordField fx:id="confirmPasswordField" promptText="Confirme sua senha" styleClass="input-field" />
+            <PasswordField fx:id="confirmPasswordField" onKeyPressed="#confirmPasswordOnKeyPressed" promptText="Confirme sua senha" styleClass="input-field" />
          </children>
       </HBox>
       <Button fx:id="btnSignUp" onAction="#onSignUp" styleClass="submit-button" text="Cadastrar" />

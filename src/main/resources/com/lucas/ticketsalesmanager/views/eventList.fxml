@@ -4,16 +4,16 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox styleClass="main-content" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="775.0" prefWidth="310.0" styleClass="main-content" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <!-- Seção de Eventos Recentes -->
    <Label styleClass="section-title" text="🆕 Eventos Recentes" />
-   <ListView fx:id="listViewRecentEvents" prefHeight="250.0" styleClass="event-list">
+   <ListView fx:id="listViewRecentEvents" prefHeight="275.0" prefWidth="310.0" styleClass="event-list">
 
    </ListView>
 
    <!-- Seção de Próximos Eventos -->
    <Label styleClass="section-title" text="📅 Próximos Eventos" />
-   <ListView fx:id="listViewUpcomingEvents" prefHeight="250.0" styleClass="event-list">
+   <ListView fx:id="listViewUpcomingEvents" prefHeight="310.0" prefWidth="310.0" styleClass="event-list">
 
    </ListView>
 </VBox>

@@ -1,7 +1,7 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes.util;
 
 public enum Scenes {
-    LOGIN("login.fxml", true),
+    LOGIN("login.fxml", false),
     SIGN_UP("signUp.fxml", true),
     DASHBOARD("dashboard.fxml", true),
     EVENT_LIST("eventList.fxml", true),

@@ -1,31 +1,37 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
-import com.lucas.ticketsalesmanager.exception.event.EventNotFoundException;
-import com.lucas.ticketsalesmanager.exception.event.EventUpdateException;
-import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
 import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.controllers.EventController;
+import com.lucas.ticketsalesmanager.exception.event.EventAlreadyExistsException;
+import com.lucas.ticketsalesmanager.exception.event.EventNotFoundException;
+import com.lucas.ticketsalesmanager.exception.event.EventUpdateException;
+import com.lucas.ticketsalesmanager.exception.event.InvalidEventDateException;
+import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
+import com.lucas.ticketsalesmanager.exception.user.UserNotAuthorizedException;
 import com.lucas.ticketsalesmanager.service.communication.EventFeedback;
+import java.text.ParseException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.lucas.ticketsalesmanager.views.controllers.scenes.LoginController.user;
+import javafx.event.ActionEvent;
+import javafx.scene.layout.VBox;
 
 public class EventDetailController {
 
+    @FXML
     public TextField eventName;
-    public TextField eventDate;
-    public TextField eventStatus;
+    @FXML
     public TextArea eventDescription;
+    @FXML
     public ListView<String> availableSeatsList;
 
     @FXML
@@ -48,10 +54,30 @@ public class EventDetailController {
     private final ObservableList<String> feedbackList = FXCollections.observableArrayList();
 
     private EventController eventController;
+    @FXML
+    private Label lblTitle;
+    private VBox hboxCreateEvent;
+    @FXML
+    private DatePicker dataPicker;
+    @FXML
+    private CheckBox checkEventStatus;
+    @FXML
+    private VBox vboxRoot;
+    @FXML
+    private VBox vboxSeats;
+    @FXML
+    private VBox vboxFeedbackArea;
+
+    public void initialize() {
+        this.currentUser = LoginController.user;
+        this.eventController = new EventController();
+        this.configureViewBasedOnUser();
+    }
 
     public void setEventAndUser(Event event) {
-        this.currentEvent = event;
         this.currentUser = LoginController.user;
+
+        this.currentEvent = event;
         this.eventController = new EventController();
 
         loadEventDetails();
@@ -59,7 +85,8 @@ public class EventDetailController {
     }
 
     /**
-     * Configura a interface de acordo com o tipo de usuário logado (Admin ou Usuário Comum)
+     * Configura a interface de acordo com o tipo de usuário logado (Admin ou
+     * Usuário Comum)
      */
     private void configureViewBasedOnUser() {
         if (currentUser.isAdmin()) {
@@ -73,14 +100,11 @@ public class EventDetailController {
      * Configura a interface para o administrador (criação/edição de evento)
      */
     private void configureAdminView() {
-        eventName.setEditable(true);
-        eventDate.setEditable(true);
-        eventStatus.setEditable(true);
         eventDescription.setEditable(true);
+        lblTitle.setText("Criar novo evento");
+        vboxRoot.getChildren().remove(vboxFeedbackArea);
+        vboxRoot.getChildren().remove(vboxSeats);
 
-        feedbackListView.setVisible(false);
-        ratingSlider.setVisible(false);
-        commentTextArea.setVisible(false);
         btnReserveSeat.setText("Salvar Evento");
         btnReserveSeat.setOnAction(event -> handleSaveEvent());
     }
@@ -89,11 +113,8 @@ public class EventDetailController {
      * Configura a interface para o usuário comum (feedback, reserva de assento)
      */
     private void configureUserView() {
-        eventName.setEditable(false);
-        eventDate.setEditable(false);
-        eventStatus.setEditable(false);
-        eventDescription.setEditable(false);
-
+        vboxRoot.getChildren().remove(hboxCreateEvent);
+        lblTitle.setText("Deixar feedback");
         feedbackListView.setVisible(true);
         ratingSlider.setVisible(true);
         commentTextArea.setVisible(true);
@@ -134,16 +155,19 @@ public class EventDetailController {
 
                 showAlert("Sucesso", "Assento reservado com sucesso!", Alert.AlertType.INFORMATION);
             }
-        } catch (Exception e) {
+        } catch (EventNotFoundException | EventUpdateException | SeatUnavailableException | IllegalArgumentException e) {
             showAlert("Erro", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     private void loadEventDetails() {
         if (currentEvent != null) {
+            LocalDate localDate = currentEvent.getDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
             eventName.setText(currentEvent.getName());
-            eventDate.setText("Data: " + currentEvent.getDate().toString());
-            eventStatus.setText("Status: " + (currentEvent.isActive() ? "Ativo" : "Inativo"));
+            dataPicker.setValue(localDate);
+            checkEventStatus.selectedProperty().set(currentEvent.isActive());
             eventDescription.setText(currentEvent.getDescription());
 
             if (!currentUser.isAdmin()) {
@@ -155,45 +179,42 @@ public class EventDetailController {
             }
         } else if (currentUser.isAdmin()) {
             eventName.clear();
-            eventDate.clear();
-            eventStatus.clear();
+            checkEventStatus.selectedProperty().set(false);
             eventDescription.clear();
             seatCountField.clear();
         }
     }
 
-    @FXML
     public void handleSaveEvent() {
         try {
             String name = eventName.getText().trim();
-            String dateString = eventDate.getText().trim();
-            String status = eventStatus.getText().trim();
+            String dateString = dataPicker.getValue().toString();
             String description = eventDescription.getText().trim();
 
-            if (name.isEmpty() || dateString.isEmpty() || status.isEmpty() || description.isEmpty()) {
+            if (name.isEmpty() || dateString.isEmpty() || description.isEmpty()) {
                 throw new IllegalArgumentException("Todos os campos devem ser preenchidos.");
             }
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = dateFormat.parse(dateString);
 
             if (currentEvent == null) {
                 currentEvent = new Event(name, description, date);
                 eventController.registerEvent(currentUser, currentEvent);
+                currentEvent = null;
             } else {
                 currentEvent.setName(name);
                 currentEvent.setDate(date);
-                currentEvent.setActive(Boolean.parseBoolean(status));
+                currentEvent.setActive(checkEventStatus.isSelected());
                 currentEvent.setDescription(description);
                 eventController.updateEvent(currentEvent);
             }
-
+            
             showAlert("Sucesso", "Evento salvo com sucesso!", Alert.AlertType.INFORMATION);
-        } catch (Exception e) {
+        } catch (EventAlreadyExistsException | EventNotFoundException | EventUpdateException | InvalidEventDateException | UserNotAuthorizedException | IllegalArgumentException | ParseException e) {
             showAlert("Erro", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
-
 
     private void loadFeedbacks() {
         List<EventFeedback> feedbacks = currentEvent.getFeedbacks();
@@ -238,6 +259,9 @@ public class EventDetailController {
     }
 
     private void clearForm() {
+        eventName.clear();
+        eventDescription.clear();
+        dataPicker.setValue(LocalDate.MIN);
         ratingSlider.setValue(0);
         commentTextArea.clear();
     }
@@ -283,5 +307,11 @@ public class EventDetailController {
         } catch (SecurityException e) {
             showAlert("Permissão Negada", e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    @FXML
+    private void saveEvent(ActionEvent event) {
+        this.handleSaveEvent();
+        this.clearForm();
     }
 }
