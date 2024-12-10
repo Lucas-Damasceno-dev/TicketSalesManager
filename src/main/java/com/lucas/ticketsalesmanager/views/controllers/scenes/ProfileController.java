@@ -1,3 +1,13 @@
+/***********************************************************************************************
+ Author: LUCAS DA CONCEIÇÃO DAMASCENO
+ Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+ Completed on: 09/12/2024
+ I declare that this code was prepared by me individually and does not contain any
+ code snippet from another colleague or another author, such as from books and
+ handouts, and web pages or electronic documents. Any piece of code
+ by someone other than mine is highlighted with a citation for the author and source
+ of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+ ************************************************************************************************/
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 import com.lucas.ticketsalesmanager.exception.ticket.*;
@@ -22,6 +32,17 @@ import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.Alert.AlertType.WARNING;
 
+/**
+ * Controller for managing the user's profile.
+ * This controller allows users to view and edit their personal information,
+ * as well as manage their ticket status (cancelling or reactivating tickets).
+ *
+ * <ul>
+ *     <li>Displays and allows modification of user profile information (name, CPF, email, login, and password).</li>
+ *     <li>Handles ticket management by allowing users to cancel or reactivate tickets.</li>
+ *     <li>Handles actions like saving and editing profile details, and cancelling or reactivating tickets from a table view.</li>
+ * </ul>
+ */
 public class ProfileController {
 
     @FXML
@@ -65,6 +86,11 @@ public class ProfileController {
     @FXML
     private Button btnCancel;
 
+
+    /**
+     * Initializes the profile controller by setting up necessary controllers,
+     * configuring the ticket table columns, and loading the user's profile data.
+     */
     public void initialize() {
         ticketController = new TicketController();
         userController = new UserController();
@@ -75,6 +101,10 @@ public class ProfileController {
         setupButtonActions();
     }
 
+    /**
+     * Configures the columns in the ticket table to display relevant ticket data.
+     * This includes event name, date, seat, price, and status.
+     */
     private void configureTableColumns() {
         columnEvent.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getEvent().getName())
@@ -101,11 +131,21 @@ public class ProfileController {
         tableTickets.setItems(ticketList);
     }
 
+    /**
+     * Loads the user's profile information and populates the profile fields and ticket list.
+     *
+     * @param user The user whose profile information is to be loaded.
+     */
     public void loadUserProfile(User user) {
         fillUserInfo(user);
         refreshTicketList();
     }
 
+    /**
+     * Fills the profile fields with the provided user's information.
+     *
+     * @param user The user whose information is to be filled in the fields.
+     */
     public void fillUserInfo(User user) {
         txtName.setText(user.getName());
         txtCpf.setText(user.getCpf());
@@ -114,12 +154,20 @@ public class ProfileController {
         txtPassword.setText(user.getPassword());
     }
 
+    /**
+     * Handles the action when the user cancels the profile editing.
+     * Resets the fields to the original user data and makes the fields non-editable.
+     */
     @FXML
     public void handleCancel() {
         fillUserInfo(user);
         setEditableTextField(false);
     }
 
+    /**
+     * Handles the action when the user saves the changes made to their profile.
+     * Updates the user profile with the new data and displays a success or error message.
+     */
     @FXML
     public void handleSave() {
         String name = txtName.getText();
@@ -138,17 +186,30 @@ public class ProfileController {
         setEditableTextField(false);
     }
 
+    /**
+     * Handles the action when the user clicks the "Edit" button.
+     * Makes the profile fields editable for the user to modify.
+     */
     @FXML
     public void handleEdit() {
         setEditableTextField(true);
     }
 
+    /**
+     * Sets whether the profile fields are editable or not.
+     *
+     * @param editable Boolean value indicating whether the fields should be editable.
+     */
     public void setEditableTextField(boolean editable) {
         txtName.setEditable(editable);
         txtEmail.setEditable(editable);
         txtLogin.setEditable(editable);
     }
 
+    /**
+     * Handles the action when the user clicks the "Cancel Ticket" button.
+     * Cancels the selected ticket and displays a success or error message.
+     */
     public void handleCancelTicket() {
         Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
@@ -165,6 +226,10 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Handles the action when the user clicks the "Reactive Ticket" button.
+     * Reactivates the selected ticket and displays a success or error message.
+     */
     public void handleReactiveTicket() {
         Ticket selectedTicket = tableTickets.getSelectionModel().getSelectedItem();
         if (selectedTicket == null) {
@@ -181,6 +246,10 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Refreshes the list of tickets by fetching the most up-to-date list of purchased tickets.
+     * Displays an error message if the ticket list cannot be updated.
+     */
     private void refreshTicketList() {
         try {
             List<Ticket> tickets = ticketController.listPurchasedTickets(LoginController.user);
@@ -190,6 +259,9 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Sets up the button actions, including handling ticket cancellation and reactivation.
+     */
     private void setupButtonActions() {
         btnCancelTicket.setOnAction(event -> {
             try {

@@ -1,3 +1,13 @@
+/***********************************************************************************************
+ Author: LUCAS DA CONCEIÇÃO DAMASCENO
+ Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+ Completed on: 09/12/2024
+ I declare that this code was prepared by me individually and does not contain any
+ code snippet from another colleague or another author, such as from books and
+ handouts, and web pages or electronic documents. Any piece of code
+ by someone other than mine is highlighted with a citation for the author and source
+ of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+ ************************************************************************************************/
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 import com.lucas.ticketsalesmanager.Main;
@@ -22,6 +32,18 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Controller for handling user login functionality.
+ * This controller manages the login screen, user authentication,
+ * and navigation to the dashboard or sign-up screen.
+ *
+ * <ul>
+ *     <li>Handles user input for username and password.</li>
+ *     <li>Validates credentials by checking against stored user data.</li>
+ *     <li>Manages the choice of application language using a dropdown menu.</li>
+ *     <li>Transitions to the Dashboard or Sign-up screen based on user actions.</li>
+ * </ul>
+ */
 public class LoginController {
 
     private StageController stageController;
@@ -45,6 +67,10 @@ public class LoginController {
     @FXML
     private Hyperlink hlRegisterHere;
 
+    /**
+     * Initializes the login controller by setting up necessary controllers
+     * and configuring the language selection options.
+     */
     public void initialize() {
         stageController = Main.stageController;
         screensController = Main.screensController;
@@ -52,6 +78,14 @@ public class LoginController {
         configureLangChoice();
     }
 
+    /**
+     * Handles the login process. Verifies that the username and password
+     * fields are filled, authenticates the user, and transitions to the
+     * dashboard screen if login is successful.
+     *
+     * Displays error messages if the fields are empty, the user is not found,
+     * or if the password is incorrect.
+     */
     @FXML
     public void handleLogin() {
 
@@ -81,6 +115,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Navigates the user to the sign-up screen for registration.
+     * If the screen cannot be loaded, an error message is shown.
+     */
     @FXML
     public void onSignUp() {
         try {
@@ -91,6 +129,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the event when the user presses a key on the keyboard.
+     * If the Enter key is pressed, it triggers the login process.
+     *
+     * @param event The key press event.
+     */
     @FXML
     private void onKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
@@ -98,6 +142,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Configures the language selection dropdown, initializing it with
+     * available languages and setting the current language.
+     * Also listens for changes to the selected language and updates
+     * the interface accordingly.
+     */
     private void configureLangChoice() {
         choiceLang.getItems().addAll(Languages.values());
         Languages current = Main.languageController.getCurretLanguage();
@@ -108,7 +158,11 @@ public class LoginController {
             updateInterfaceLang();
         });
     }
-    
+
+    /**
+     * Updates the interface language based on the selected language in the dropdown.
+     * It adjusts the text of the login form fields, button, and labels accordingly.
+     */
     private void updateInterfaceLang()
     {
         usernameField.setPromptText(Main.languageController.getLabel("enter-username"));

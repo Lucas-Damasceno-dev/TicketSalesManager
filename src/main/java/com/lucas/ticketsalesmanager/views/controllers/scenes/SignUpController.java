@@ -1,3 +1,13 @@
+/***********************************************************************************************
+ Author: LUCAS DA CONCEIÇÃO DAMASCENO
+ Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+ Completed on: 09/12/2024
+ I declare that this code was prepared by me individually and does not contain any
+ code snippet from another colleague or another author, such as from books and
+ handouts, and web pages or electronic documents. Any piece of code
+ by someone other than mine is highlighted with a citation for the author and source
+ of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+ ************************************************************************************************/
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 import com.lucas.ticketsalesmanager.Main;
@@ -20,8 +30,22 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Controller for handling the user registration process in the ticket sales system.
+ * This controller manages user input for creating a new account, validates the input,
+ * and interacts with the user controller to register a new user in the system.
+ * It also manages language localization for interface labels.
+ *
+ * <ul>
+ *     <li>Handles user input for name, CPF, username, email, and password.</li>
+ *     <li>Validates input to ensure all fields are filled and passwords match.</li>
+ *     <li>Registers a new user and redirects to the login screen if successful.</li>
+ *     <li>Handles navigation to the login screen if the user already has an account.</li>
+ *     <li>Updates interface elements based on the selected language.</li>
+ * </ul>
+ */
 public class SignUpController {
-    
+
     @FXML
     private TextField nameField;
     @FXML
@@ -34,10 +58,10 @@ public class SignUpController {
     private PasswordField passwordField;
     @FXML
     private PasswordField confirmPasswordField;
-    
+
     private ScreensController screensController;
-    
     private UserController userController;
+
     @FXML
     private Button btnSignUp;
     @FXML
@@ -54,13 +78,23 @@ public class SignUpController {
     private Label lblAlreadyHaveAccount;
     @FXML
     private Hyperlink lblLoginHere;
-    
+
+    /**
+     * Initializes the SignUpController by setting up necessary controllers and
+     * updating interface elements based on the selected language.
+     */
     public void initialize() {
         screensController = Main.screensController;
         userController = new UserController();
         updateInterfaceLang();
     }
-    
+
+    /**
+     * Handles the sign-up process by validating the user input and registering
+     * a new user. If successful, navigates to the login screen.
+     *
+     * @throws IOException if there's an error loading the login screen.
+     */
     @FXML
     public void onSignUp() {
         String username = usernameField.getText();
@@ -69,49 +103,60 @@ public class SignUpController {
         String confirmPassword = confirmPasswordField.getText();
         String name = nameField.getText();
         String cpf = CPFField.getText();
-        
+
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()
                 || confirmPassword.isEmpty() || name.isEmpty() || cpf.isEmpty()) {
-            stageController.showAlert(ERROR,
-                    "Erro", "Preencha todos os campos.");
+            stageController.showAlert(ERROR, "Error", "Please fill in all fields.");
             return;
         }
         if (!password.equals(confirmPassword)) {
-            stageController.showAlert(ERROR,
-                    "Erro", "As senhas digitadas não são iguais");
+            stageController.showAlert(ERROR, "Error", "Passwords do not match.");
             return;
         }
-        
+
         boolean isAdmin = username.equals("admin") && password.equals("admin");
-        
+
         try {
             userController.registerUser(username, password, name, cpf, email, isAdmin);
             stageController.changeStageContent(screensController.loadScreen(LOGIN));
         } catch (UserAlreadyExistsException | UserDAOException ex) {
-            stageController.showAlert(ERROR, "Erro", ex.getMessage());
+            stageController.showAlert(ERROR, "Error", ex.getMessage());
         } catch (IOException ex) {
-            stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
-                    "Erro", "Não foi possível carregar a tela de login.");
+            stageController.showAlert(ERROR, "Error", "Could not load the login screen.");
         }
     }
-    
+
+    /**
+     * Navigates the user back to the login screen.
+     *
+     * @throws IOException if there's an error loading the login screen.
+     */
     @FXML
     public void onBackToLogin() {
         try {
             stageController.changeStageContent(screensController.loadScreen(LOGIN));
         } catch (IOException e) {
-            stageController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
-                    "Erro", "Não foi possível carregar a tela de login.");
+            stageController.showAlert(ERROR, "Error", "Could not load the login screen.");
         }
     }
-    
+
+    /**
+     * Handles key presses in the confirm password field. If the Enter key is pressed,
+     * it triggers the sign-up process.
+     *
+     * @param event The key event.
+     */
     @FXML
     private void confirmPasswordOnKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
             this.onSignUp();
         }
     }
-    
+
+    /**
+     * Updates the interface language based on the selected language in the system.
+     * This method sets text for labels, prompt text for input fields, and button text.
+     */
     private void updateInterfaceLang() {
         lblAccountRegistration.setText(Main.languageController.getLabel("account-registration"));
         usernameField.setPromptText(Main.languageController.getLabel("enter-username"));

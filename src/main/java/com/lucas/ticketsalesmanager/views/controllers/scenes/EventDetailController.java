@@ -1,3 +1,13 @@
+/***********************************************************************************************
+ Author: LUCAS DA CONCEIÇÃO DAMASCENO
+ Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+ Completed on: 09/12/2024
+ I declare that this code was prepared by me individually and does not contain any
+ code snippet from another colleague or another author, such as from books and
+ handouts, and web pages or electronic documents. Any piece of code
+ by someone other than mine is highlighted with a citation for the author and source
+ of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+ ************************************************************************************************/
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
 import com.lucas.ticketsalesmanager.Main;
@@ -31,17 +41,32 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 
+/**
+ * Controller responsible for managing the event detail screen.
+ * This screen has different behavior for administrators and regular users.
+ *
+ * <ul>
+ *     <li>Admins can create and edit events, set available seats, and update event information.</li>
+ *     <li>Users can reserve seats, leave feedback, and view event details.</li>
+ * </ul>
+ *
+ * The controller interacts with the EventController to manage event data
+ * and updates the user interface accordingly.
+ */
 public class EventDetailController {
 
     @FXML
     public TextField eventName;
+
     @FXML
     public TextArea eventDescription;
+
     @FXML
     public ListView<String> availableSeatsList;
 
     @FXML
     private TextField seatCountField;
+
     @FXML
     private ListView<String> feedbackListView;
 
@@ -87,7 +112,11 @@ public class EventDetailController {
 
     private Event reservedEvent;
     private String selectedSeat;
-    
+
+    /**
+     * Initializes the controller by setting up the user and configuring the view
+     * based on the user's role (Admin or Regular User).
+     */
     public void initialize() {
         this.currentUser = LoginController.user;
         this.eventController = new EventController();
@@ -99,6 +128,11 @@ public class EventDetailController {
         selectedSeat = null;
     }
 
+    /**
+     * Sets the current event and user information.
+     *
+     * @param event The event whose details will be displayed.
+     */
     public void setEventAndUser(Event event) {
         this.currentUser = LoginController.user;
 
@@ -110,8 +144,8 @@ public class EventDetailController {
     }
 
     /**
-     * Configura a interface de acordo com o tipo de usuário logado (Admin ou
-     * Usuário Comum)
+     * Configures the user interface for administrators.
+     * Admins have access to event creation and editing options.
      */
     private void configureViewBasedOnUser() {
         if (currentUser.isAdmin()) {
@@ -122,7 +156,8 @@ public class EventDetailController {
     }
 
     /**
-     * Configura a interface para o administrador (criação/edição de evento)
+     * Configures the user interface for regular users.
+     * Users can reserve seats and leave feedback.
      */
     private void configureAdminView() {
         eventName.setEditable(true);
@@ -158,6 +193,11 @@ public class EventDetailController {
         vboxRoot.getChildren().remove(vboxSeats);
     }
 
+    /**
+     * Handles the reservation of a seat.
+     * Users can select a seat from the list and confirm the reservation.
+     * Admins can set the number of available seats for an event.
+     */
     @FXML
     public void handleReserveSeat() {
         try {
@@ -190,7 +230,7 @@ public class EventDetailController {
 
                 reservedEvent = eventController.removeEventSeat(currentEvent.getName(), selectedSeat);
                 availableSeatsList.getItems().remove(selectedSeat);
-                
+
                 Parent purch = Main.screensController.loadScreen(Scenes.PURCHASE);
                 Main.dashboardController.setParentAtStackPane(purch);
             }
@@ -200,21 +240,34 @@ public class EventDetailController {
             Logger.getLogger(EventDetailController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    /**
+     * Gets the reserved event after a seat reservation is completed.
+     *
+     * @return The reserved event.
+     */
     public Event getReservedEvent(){
         return reservedEvent;
     }
-    
+
+    /**
+     * Gets the reserved seat identifier after a seat reservation is completed.
+     *
+     * @return The reserved seat identifier.
+     */
     public String getReservedSeat(){
         return selectedSeat;
     }
-    
+
+    /**
+     * Loads and displays the details of the current event.
+     */
     private void loadEventDetails() {
         if (currentEvent != null) {
             LocalDate localDate = currentEvent.getDate().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-            
+
             eventName.setText(currentEvent.getName());
             dataPicker.setValue(localDate);
             checkEventStatus.selectedProperty().set(currentEvent.isActive());
@@ -237,6 +290,12 @@ public class EventDetailController {
         }
     }
 
+    /**
+     * Builds a list of seat identifiers.
+     *
+     * @param qty The quantity of seats to create.
+     * @return A list of seat identifiers.
+     */
     private List<String> buildSeats(Integer qty) {
         List<String> seats = new ArrayList(qty);
         for (int i = 0; i < qty; i++) {
@@ -245,6 +304,10 @@ public class EventDetailController {
         return seats;
     }
 
+    /**
+     * Handles the action of saving a new event or updating an existing one.
+     * Admins can create a new event or update the details of an existing event.
+     */
     public void handleSaveEvent() {
         try {
             String name = eventName.getText().trim();
@@ -281,6 +344,9 @@ public class EventDetailController {
         currentEvent = null;
     }
 
+    /**
+     * Loads and displays the feedback left by users for the current event.
+     */
     private void loadFeedbacks() {
         List<EventFeedback> feedbacks = currentEvent.getFeedbacks();
         feedbackList.clear();
@@ -291,16 +357,29 @@ public class EventDetailController {
         feedbackListView.setItems(feedbackList);
     }
 
+    /**
+     * Loads and displays the available seats for the current event.
+     */
     private void loadAvailableSeats() {
         List<String> seats = currentEvent.getAvailableSeats();
         availableSeatsList.setItems(FXCollections.observableArrayList(seats));
     }
 
+    /**
+     * Formats the feedback information for display in the list.
+     *
+     * @param feedback The feedback to format.
+     * @return A formatted string representation of the feedback.
+     */
     private String formatFeedback(EventFeedback feedback) {
         return String.format("Usuário: %s\nNota: %.1f\nComentário: %s",
                 feedback.getUser().getName(), feedback.getRating(), feedback.getComment());
     }
 
+    /**
+     * Handles the action of saving user feedback for the current event.
+     * Users can rate the event and leave a comment.
+     */
     @FXML
     public void handleSaveFeedback() {
         try {
@@ -323,6 +402,9 @@ public class EventDetailController {
         }
     }
 
+    /**
+     * Clears the input fields of the feedback form.
+     */
     private void clearForm() {
         eventName.clear();
         eventDescription.clear();
@@ -331,6 +413,13 @@ public class EventDetailController {
         commentTextArea.clear();
     }
 
+    /**
+     * Displays an alert message on the screen.
+     *
+     * @param title The title of the alert window.
+     * @param message The content of the alert message.
+     * @param alertType The type of alert (e.g., information, error).
+     */
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -339,6 +428,10 @@ public class EventDetailController {
         alert.showAndWait();
     }
 
+    /**
+     * Handles the action of canceling the feedback form.
+     * If the form has been partially filled, it asks for confirmation before clearing it.
+     */
     @FXML
     public void handleCancelFeedback() {
         try {
@@ -374,6 +467,11 @@ public class EventDetailController {
         }
     }
 
+    /**
+     * Handles the action of saving the current event and clearing the form fields.
+     *
+     * @param event The event triggered by the user action.
+     */
     @FXML
     private void saveEvent(ActionEvent event) {
         this.handleSaveEvent();

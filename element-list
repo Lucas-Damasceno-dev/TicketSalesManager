@@ -1,0 +1,16 @@
+com.lucas.ticketsalesmanager
+com.lucas.ticketsalesmanager.controllers
+com.lucas.ticketsalesmanager.exception
+com.lucas.ticketsalesmanager.exception.event
+com.lucas.ticketsalesmanager.exception.payment
+com.lucas.ticketsalesmanager.exception.purchase
+com.lucas.ticketsalesmanager.exception.ticket
+com.lucas.ticketsalesmanager.exception.user
+com.lucas.ticketsalesmanager.models
+com.lucas.ticketsalesmanager.models.paymentMethod
+com.lucas.ticketsalesmanager.persistence
+com.lucas.ticketsalesmanager.service.communication
+com.lucas.ticketsalesmanager.views.controllers
+com.lucas.ticketsalesmanager.views.controllers.scenes
+com.lucas.ticketsalesmanager.views.controllers.scenes.util
+models
