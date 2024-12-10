@@ -1,5 +1,6 @@
 package com.lucas.ticketsalesmanager.views.controllers.scenes;
 
+import com.lucas.ticketsalesmanager.Main;
 import com.lucas.ticketsalesmanager.models.Event;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.controllers.EventController;
@@ -10,6 +11,8 @@ import com.lucas.ticketsalesmanager.exception.event.InvalidEventDateException;
 import com.lucas.ticketsalesmanager.exception.event.SeatUnavailableException;
 import com.lucas.ticketsalesmanager.exception.user.UserNotAuthorizedException;
 import com.lucas.ticketsalesmanager.service.communication.EventFeedback;
+import com.lucas.ticketsalesmanager.views.controllers.scenes.util.Scenes;
+import java.io.IOException;
 import java.text.ParseException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +25,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 
 public class EventDetailController {
@@ -68,10 +74,29 @@ public class EventDetailController {
     @FXML
     private VBox vboxFeedbackArea;
 
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Label lblEventValue;
+    @FXML
+    private TextField fieldEventValue;
+    @FXML
+    private Label lblQtySeats;
+    @FXML
+    private TextField fieldQtySeats;
+
+    private Event reservedEvent;
+    private String selectedSeat;
+    
     public void initialize() {
         this.currentUser = LoginController.user;
         this.eventController = new EventController();
-        this.configureViewBasedOnUser();
+        if (currentUser.isAdmin()) {
+            configureAdminView();
+        }
+        Main.eventDetailController = this;
+        reservedEvent = null;
+        selectedSeat = null;
     }
 
     public void setEventAndUser(Event event) {
@@ -100,7 +125,13 @@ public class EventDetailController {
      * Configura a interface para o administrador (criação/edição de evento)
      */
     private void configureAdminView() {
+        eventName.setEditable(true);
+        checkEventStatus.setDisable(false);
         eventDescription.setEditable(true);
+        btnSave.setVisible(true);
+        dataPicker.setDisable(false);
+        fieldEventValue.setEditable(true);
+        fieldQtySeats.setEditable(true);
         lblTitle.setText("Criar novo evento");
         vboxRoot.getChildren().remove(vboxFeedbackArea);
         vboxRoot.getChildren().remove(vboxSeats);
@@ -114,17 +145,24 @@ public class EventDetailController {
      */
     private void configureUserView() {
         vboxRoot.getChildren().remove(hboxCreateEvent);
+        Date now = new Date();
+        if (currentEvent.getDate().after(now)) {
+            btnReserveSeat.setVisible(true);
+            loadAvailableSeats();
+            btnReserveSeat.setOnAction(event -> handleReserveSeat());
+            btnReserveSeat.setText("Reservar Assento");
+            vboxRoot.getChildren().remove(vboxFeedbackArea);
+            return;
+        }
         lblTitle.setText("Deixar feedback");
-        feedbackListView.setVisible(true);
-        ratingSlider.setVisible(true);
-        commentTextArea.setVisible(true);
-        btnReserveSeat.setText("Reservar Assento");
-        btnReserveSeat.setOnAction(event -> handleReserveSeat());
+        vboxRoot.getChildren().remove(vboxSeats);
     }
 
     @FXML
     public void handleReserveSeat() {
         try {
+            reservedEvent = null;
+            selectedSeat = null;
             if (currentUser.isAdmin()) {
                 String seatCountText = seatCountField.getText().trim();
                 if (seatCountText.isEmpty()) {
@@ -144,31 +182,45 @@ public class EventDetailController {
 
                 showAlert("Sucesso", "Quantidade de assentos definida com sucesso!", Alert.AlertType.INFORMATION);
             } else {
-                String selectedSeat = availableSeatsList.getSelectionModel().getSelectedItem();
+                selectedSeat = availableSeatsList.getSelectionModel().getSelectedItem();
 
                 if (selectedSeat == null) {
                     throw new IllegalArgumentException("Nenhum assento foi selecionado.");
                 }
 
-                eventController.removeEventSeat(currentEvent.getName(), selectedSeat);
+                reservedEvent = eventController.removeEventSeat(currentEvent.getName(), selectedSeat);
                 availableSeatsList.getItems().remove(selectedSeat);
-
-                showAlert("Sucesso", "Assento reservado com sucesso!", Alert.AlertType.INFORMATION);
+                
+                Parent purch = Main.screensController.loadScreen(Scenes.PURCHASE);
+                Main.dashboardController.setParentAtStackPane(purch);
             }
         } catch (EventNotFoundException | EventUpdateException | SeatUnavailableException | IllegalArgumentException e) {
             showAlert("Erro", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (IOException ex) {
+            Logger.getLogger(EventDetailController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    public Event getReservedEvent(){
+        return reservedEvent;
+    }
+    
+    public String getReservedSeat(){
+        return selectedSeat;
+    }
+    
     private void loadEventDetails() {
         if (currentEvent != null) {
             LocalDate localDate = currentEvent.getDate().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
+            
             eventName.setText(currentEvent.getName());
             dataPicker.setValue(localDate);
             checkEventStatus.selectedProperty().set(currentEvent.isActive());
             eventDescription.setText(currentEvent.getDescription());
+            fieldQtySeats.setText(String.valueOf(currentEvent.getAvailableSeats().size()));
+            fieldEventValue.setText(String.valueOf(currentEvent.getEventValue()));
 
             if (!currentUser.isAdmin()) {
                 loadFeedbacks();
@@ -185,11 +237,21 @@ public class EventDetailController {
         }
     }
 
+    private List<String> buildSeats(Integer qty) {
+        List<String> seats = new ArrayList(qty);
+        for (int i = 0; i < qty; i++) {
+            seats.add("A" + i);
+        }
+        return seats;
+    }
+
     public void handleSaveEvent() {
         try {
             String name = eventName.getText().trim();
             String dateString = dataPicker.getValue().toString();
             String description = eventDescription.getText().trim();
+            Integer qtySeats = Integer.valueOf(fieldQtySeats.getText());
+            Float eventValue = Float.valueOf(fieldEventValue.getText());
 
             if (name.isEmpty() || dateString.isEmpty() || description.isEmpty()) {
                 throw new IllegalArgumentException("Todos os campos devem ser preenchidos.");
@@ -200,20 +262,23 @@ public class EventDetailController {
 
             if (currentEvent == null) {
                 currentEvent = new Event(name, description, date);
+                currentEvent.setEventValue(eventValue);
+                currentEvent.setAvailableSeats(buildSeats(qtySeats));
+                currentEvent.setActive(checkEventStatus.isSelected());
                 eventController.registerEvent(currentUser, currentEvent);
-                currentEvent = null;
             } else {
                 currentEvent.setName(name);
                 currentEvent.setDate(date);
+                currentEvent.setEventValue(eventValue);
                 currentEvent.setActive(checkEventStatus.isSelected());
                 currentEvent.setDescription(description);
                 eventController.updateEvent(currentEvent);
             }
-            
             showAlert("Sucesso", "Evento salvo com sucesso!", Alert.AlertType.INFORMATION);
         } catch (EventAlreadyExistsException | EventNotFoundException | EventUpdateException | InvalidEventDateException | UserNotAuthorizedException | IllegalArgumentException | ParseException e) {
             showAlert("Erro", e.getMessage(), Alert.AlertType.ERROR);
         }
+        currentEvent = null;
     }
 
     private void loadFeedbacks() {
@@ -261,7 +326,7 @@ public class EventDetailController {
     private void clearForm() {
         eventName.clear();
         eventDescription.clear();
-        dataPicker.setValue(LocalDate.MIN);
+        dataPicker.setValue(LocalDate.now());
         ratingSlider.setValue(0);
         commentTextArea.clear();
     }

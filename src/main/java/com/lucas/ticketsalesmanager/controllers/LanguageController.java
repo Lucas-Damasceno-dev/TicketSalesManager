@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,7 +31,7 @@ public class LanguageController {
     private void loadTranslations(Languages language, Map<String, String> labels) {
         URL filePath = getClass().getResource(language.getFileName());
 
-        try (FileReader reader = new FileReader(filePath.getFile())) {
+        try (FileReader reader = new FileReader(filePath.getFile(), Charset.forName("UTF-8"))) {
             Gson gson = new Gson();
             Type mapType = new TypeToken<Map<String, String>>() {
             }.getType();
@@ -55,5 +56,9 @@ public class LanguageController {
 
     public void updateLanguage(Languages lang) {
         this.currentLanguage = lang;
+    }
+    
+    public Languages getCurretLanguage(){
+        return this.currentLanguage;
     }
 }

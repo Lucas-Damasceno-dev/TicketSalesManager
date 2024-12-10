@@ -22,15 +22,31 @@
         <VBox alignment="CENTER" spacing="15" styleClass="event-info">
          <HBox alignment="CENTER" prefHeight="30.0" prefWidth="479.0" spacing="5.0">
             <children>
-                  <TextField fx:id="eventName" prefHeight="25.0" prefWidth="302.0" promptText="Nome do Evento" styleClass="event-title" />
-               <DatePicker fx:id="dataPicker" />
+                  <TextField fx:id="eventName" editable="false" prefHeight="25.0" prefWidth="302.0" promptText="Nome do Evento" styleClass="event-title" />
+               <DatePicker fx:id="dataPicker" disable="true" editable="false" />
             </children>
          </HBox>
-            <TextArea fx:id="eventDescription" promptText="Descrição detalhada do evento." styleClass="event-description" wrapText="true" />
+            <TextArea fx:id="eventDescription" editable="false" prefHeight="139.0" prefWidth="479.0" promptText="Descrição detalhada do evento." styleClass="event-description" wrapText="true" />
+         <VBox prefHeight="28.0" prefWidth="479.0" spacing="5.0">
+            <children>
+               <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="479.0">
+                  <children>
+                     <Label fx:id="lblEventValue" text="Valor do evento: " />
+                     <TextField fx:id="fieldEventValue" editable="false" promptText="R$" />
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="479.0">
+                  <children>
+                     <Label fx:id="lblQtySeats" text="Quantidade de assentos:" />
+                     <TextField fx:id="fieldQtySeats" editable="false" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
          <HBox alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="479.0" spacing="10.0">
             <children>
-               <CheckBox fx:id="checkEventStatus" mnemonicParsing="false" text="Disponível" />
-               <Button mnemonicParsing="false" onAction="#saveEvent" text="Salvar" />
+               <CheckBox fx:id="checkEventStatus" disable="true" mnemonicParsing="false" text="Disponível" />
+               <Button fx:id="btnSave" mnemonicParsing="false" onAction="#saveEvent" text="Salvar" visible="false" />
             </children>
          </HBox>
         </VBox>

@@ -20,9 +20,6 @@ import com.lucas.ticketsalesmanager.exception.ticket.*;
 import com.lucas.ticketsalesmanager.models.paymentMethod.Payment;
 import com.lucas.ticketsalesmanager.persistence.TicketDAO;
 import jakarta.mail.MessagingException;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 
 import java.util.List;
 
@@ -62,7 +59,7 @@ public class TicketController {
         }
 
         Ticket ticket = new Ticket(event, price, seat);
-        Purchase purchase = new Purchase(user, ticket, paymentMethod);
+        Purchase purchase = new Purchase(user, ticket, paymentMethod.getName());
         if (purchase.processPurchase(user, ticket, paymentMethod)) {
             ticketDAO.addTicket(ticket);
             return ticket;

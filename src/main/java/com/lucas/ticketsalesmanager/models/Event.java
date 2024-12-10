@@ -1,14 +1,13 @@
-/***********************************************************************************************
-Author: LUCAS DA CONCEIÇÃO DAMASCENO
-Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
-Completed on: 10/24/2024
-I declare that this code was prepared by me individually and does not contain any
-code snippet from another colleague or another author, such as from books and
-handouts, and web pages or electronic documents. Any piece of code
-by someone other than mine is highlighted with a citation for the author and source
-of the code, and I am aware that these excerpts will not be considered for evaluation purposes
-************************************************************************************************/
-
+/** *********************************************************************************************
+ * Author: LUCAS DA CONCEIÇÃO DAMASCENO
+ * Curricular Component: EXA 863 - MI Programming - 2024.2 - TP01
+ * Completed on: 10/24/2024
+ * I declare that this code was prepared by me individually and does not contain any
+ * code snippet from another colleague or another author, such as from books and
+ * handouts, and web pages or electronic documents. Any piece of code
+ * by someone other than mine is highlighted with a citation for the author and source
+ * of the code, and I am aware that these excerpts will not be considered for evaluation purposes
+ *********************************************************************************************** */
 package com.lucas.ticketsalesmanager.models;
 
 import com.lucas.ticketsalesmanager.service.communication.EventFeedback;
@@ -19,8 +18,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The Event class represents an event that has a name, description, date, and a list of available seats.
- * It also contains the active state of the event, based on the current date.
+ * The Event class represents an event that has a name, description, date, and a
+ * list of available seats. It also contains the active state of the event,
+ * based on the current date.
  */
 public class Event {
 
@@ -55,21 +55,23 @@ public class Event {
      */
     private boolean isActive;
 
+    private float eventValue;
+
     // Constructor
     /**
-     * Constructs a new Event with the provided name, description, and date.
-     * The event is marked as active if the date is after the current date.
+     * Constructs a new Event with the provided name, description, and date. The
+     * event is marked as active if the date is after the current date.
      *
-     * @param name        The name of the event.
+     * @param name The name of the event.
      * @param description The description of the event.
-     * @param date        The date of the event.
+     * @param date The date of the event.
      */
     public Event(String name, String description, Date date) {
         this.name = name;
         this.description = description;
         this.date = date;
+        this.isActive = true;
         this.availableSeats = new ArrayList<>();
-        this.isActive = !date.before(new Date());
         this.eventFeedbacks = new ArrayList<>();
     }
 
@@ -198,15 +200,19 @@ public class Event {
     // Overridden Methods
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Event event = (Event) o;
-        return isActive == event.isActive &&
-                Objects.equals(name, event.name) &&
-                Objects.equals(description, event.description) &&
-                Objects.equals(date, event.date) &&
-                Objects.equals(availableSeats, event.availableSeats) &&
-                Objects.equals(eventFeedbacks, event.eventFeedbacks);
+        return isActive == event.isActive
+                && Objects.equals(name, event.name)
+                && Objects.equals(description, event.description)
+                && Objects.equals(date, event.date)
+                && Objects.equals(availableSeats, event.availableSeats)
+                && Objects.equals(eventFeedbacks, event.eventFeedbacks);
     }
 
     @Override
@@ -221,13 +227,13 @@ public class Event {
      */
     @Override
     public String toString() {
-        return "Event{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", date=" + date +
-                ", availableSeats=" + availableSeats +
-                ", isActive=" + isActive +
-                '}';
+        return "Event{"
+                + "name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", date=" + date
+                + ", availableSeats=" + availableSeats
+                + ", isActive=" + isActive
+                + '}';
     }
 
     // Class Methods
@@ -253,5 +259,13 @@ public class Event {
         } else {
             System.out.println("Seat not found: " + seat);
         }
+    }
+
+    public float getEventValue() {
+        return eventValue;
+    }
+
+    public void setEventValue(float eventValue) {
+        this.eventValue = eventValue;
     }
 }

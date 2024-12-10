@@ -52,7 +52,7 @@ public class PurchaseDAO {
      * @throws MessagingException if there is an error sending the purchase confirmation email.
      */
     public void addPurchase(User user, Ticket ticket, Payment paymentMethod) throws MessagingException {
-        Purchase purchase = new Purchase(user, ticket, paymentMethod);
+        Purchase purchase = new Purchase(user, ticket, paymentMethod.getName());
         List<Purchase> purchases = purchaseDao.readData();
         if (purchases == null) {
             purchases = new ArrayList<>();

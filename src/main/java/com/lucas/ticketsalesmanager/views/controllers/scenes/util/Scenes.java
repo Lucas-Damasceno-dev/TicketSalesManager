@@ -2,13 +2,13 @@ package com.lucas.ticketsalesmanager.views.controllers.scenes.util;
 
 public enum Scenes {
     LOGIN("login.fxml", false),
-    SIGN_UP("signUp.fxml", true),
-    DASHBOARD("dashboard.fxml", true),
-    EVENT_LIST("eventList.fxml", true),
-    EVENT_DETAILS("eventDetail.fxml", true),
-    PROFILE("profile.fxml", true),
-    PURCHASE("purchase.fxml", true),
-    TICKETS("tickets.fxml", true);
+    SIGN_UP("signUp.fxml", false),
+    DASHBOARD("dashboard.fxml", false),
+    EVENT_LIST("eventList.fxml", false),
+    EVENT_DETAILS("eventDetail.fxml", false),
+    PROFILE("profile.fxml", false),
+    PURCHASE("purchase.fxml", false),
+    TICKETS("tickets.fxml", false);
 
     private final String fileName;
     private final boolean cache;

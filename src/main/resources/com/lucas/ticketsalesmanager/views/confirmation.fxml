@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.ConfirmationController">
+   <children>
+      <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Resumo da Compra" />
+      <Label fx:id="eventNameLabel" text="Nome do Evento" />
+      <Label fx:id="eventDateLabel" text="Data do Evento" />
+      <Label fx:id="eventLocationLabel" text="Local do Evento" />
+      <Label fx:id="paymentMethodLabel" text="Método de Pagamento" />
+      <HBox>
+         <children>
+            <Button fx:id="btnCancel" prefWidth="150.0" style="-fx-font-size: 16px; -fx-background-color: #f44336; -fx-text-fill: white;" text="Cancelar" />
+            <Button fx:id="btnConfirm" prefWidth="150.0" style="-fx-font-size: 16px; -fx-background-color: #4CAF50; -fx-text-fill: white;" text="Confirmar" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

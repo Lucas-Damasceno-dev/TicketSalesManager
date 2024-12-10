@@ -7,27 +7,25 @@ import com.lucas.ticketsalesmanager.models.Languages;
 import com.lucas.ticketsalesmanager.models.User;
 import com.lucas.ticketsalesmanager.views.controllers.ScreensController;
 import com.lucas.ticketsalesmanager.views.controllers.StageController;
+import com.lucas.ticketsalesmanager.views.controllers.scenes.util.Scenes;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.lucas.ticketsalesmanager.views.controllers.scenes.util.Scenes.*;
 import java.util.LinkedList;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 
 public class DashboardController {
 
@@ -45,63 +43,42 @@ public class DashboardController {
     public Button btnSearch;
     @FXML
     public StackPane stackPane;
+
     @FXML
     public HBox hboxRoot;
 
-    @FXML
-    public ListView<Event> eventListView;
-
     private StageController stageController;
     private ScreensController screensController;
-    private EventController eventController;
+
     private User currentUser;
     private List<Event> events;
+
     @FXML
     private Button btnTickets;
+
     @FXML
     private ChoiceBox<Languages> choiceLanguage;
+    @FXML
+    private VBox vboxMenu;
+    
+    private List<Event> encountredEvents;
 
     public void initialize() throws IOException {
         stageController = Main.stageController;
         screensController = Main.screensController;
-        eventController = new EventController();
-
+        Main.dashboardController = this;
         currentUser = LoginController.user;
 
         btnEvents.setVisible(currentUser.isAdmin());
-
-        loadEventList();
+        if(currentUser.isAdmin())
+        {
+            vboxMenu.getChildren().remove(btnTickets);
+        }else{
+            vboxMenu.getChildren().remove(btnEvents);
+        }
+        events = new EventController().listAvailableEvents();
+        handleEventsClick();
         configureLangChoice();
-    }
-
-    private void loadEventList() {
-        events = eventController.listEvents();
-        handleDashboardClick();
-        if (!events.isEmpty()) {
-            return;
-        }
-        Platform.runLater(() -> eventListView.getItems().setAll(events));
-        
-        eventListView.setOnMouseClicked((MouseEvent event) -> {
-            if (event.getClickCount() == 1) {
-                Event selectedEvent = eventListView.getSelectionModel().getSelectedItem();
-                if (selectedEvent != null) {
-                    handleEventDetailClick(selectedEvent);
-                }
-            }
-        });
-    }
-
-    private void handleEventDetailClick(Event selectedEvent) {
-        try {
-            FXMLLoader loader = screensController.getLoader(EVENT_DETAILS);
-            Parent eventDetailScreen = loader.load();
-            EventDetailController controller = loader.getController();
-            controller.setEventAndUser(selectedEvent);
-            stackPane.getChildren().setAll(eventDetailScreen);
-        } catch (IOException e) {
-            stageController.showAlert(ERROR, "Erro", "Não foi possível carregar os detalhes do evento.");
-        }
     }
 
     public void setStageController(StageController stageController) {
@@ -139,7 +116,8 @@ public class DashboardController {
                 Parent eventDetailScreen = screensController.loadScreen(EVENT_DETAILS);
                 stackPane.getChildren().setAll(eventDetailScreen);
             } else {
-                loadEventList();
+                Parent eventList = screensController.loadScreen(EVENT_LIST);
+                stackPane.getChildren().setAll(eventList);
             }
         } catch (IOException e) {
             stageController.showAlert(ERROR, "Erro", "Não foi possível carregar a tela de eventos.");
@@ -156,6 +134,10 @@ public class DashboardController {
         }
     }
 
+    public void setParentAtStackPane(Parent parent) {
+        stackPane.getChildren().setAll(parent);
+    }
+
     @FXML
     public void handleLogoutClick() {
         try {
@@ -170,7 +152,7 @@ public class DashboardController {
     @FXML
     public void handleSearchClick() {
         String searchText = searchField.getText();
-        List<Event> encountredEvents = new LinkedList();
+        encountredEvents = new LinkedList();
         if (searchText.isBlank()) {
             return;
         }
@@ -188,12 +170,16 @@ public class DashboardController {
         try {
             Parent eventList = screensController.loadScreen(EVENT_LIST);
             stackPane.getChildren().setAll(eventList);
+            encountredEvents.clear();
         } catch (IOException e) {
             stageController.showAlert(ERROR, "Erro", "Não foi possível carregar a tela de listagem de eventos.");
         }
 
     }
-
+    
+    public List<Event> encontredEvents(){
+        return encountredEvents;
+    }
     @FXML
     private void shearchOnKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
@@ -206,6 +192,16 @@ public class DashboardController {
         this.choiceLanguage.getSelectionModel().select(Languages.PT_BR);
         this.choiceLanguage.valueProperty().addListener((ov, old, newValue) -> {
             Main.languageController.updateLanguage(newValue);
+            updateInterfaceLang();
         });
+    }
+
+    private void updateInterfaceLang() {
+        btnProfile.setText(Main.languageController.getLabel("profile"));
+        btnTickets.setText(Main.languageController.getLabel("tickets"));
+        btnEvents.setText(Main.languageController.getLabel("events"));
+        searchField.setPromptText(Main.languageController.getLabel("search-events"));
+        btnSearch.setText(Main.languageController.getLabel("search"));
+        btnLogout.setText(Main.languageController.getLabel("logout"));
     }
 }

@@ -55,9 +55,9 @@ public class DataAccessObject<T> {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                FileWriter writer = new FileWriter(file);
-                writer.write("[]");
-                writer.close();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write("[]");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

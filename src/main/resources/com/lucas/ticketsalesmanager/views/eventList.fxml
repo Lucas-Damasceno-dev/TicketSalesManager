@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="775.0" prefWidth="310.0" styleClass="main-content" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="775.0" prefWidth="310.0" styleClass="main-content" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.EventListController">
    <!-- Seção de Eventos Recentes -->
-   <Label styleClass="section-title" text="🆕 Eventos Recentes" />
-   <ListView fx:id="listViewRecentEvents" prefHeight="275.0" prefWidth="310.0" styleClass="event-list">
-
-   </ListView>
+   <Label fx:id="lblRecentEvents" styleClass="section-title" text="🆕 Eventos Recentes" />
+   <ListView fx:id="listViewRecentEvents" onMouseClicked="#onMouseClickedRecentEvents" prefHeight="275.0" prefWidth="310.0" styleClass="event-list">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></ListView>
 
    <!-- Seção de Próximos Eventos -->
-   <Label styleClass="section-title" text="📅 Próximos Eventos" />
+   <Label fx:id="lblNextEvents" styleClass="section-title" text="📅 Próximos Eventos" />
    <ListView fx:id="listViewUpcomingEvents" prefHeight="310.0" prefWidth="310.0" styleClass="event-list">
-
-   </ListView>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></ListView>
 </VBox>

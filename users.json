@@ -1,1 +1,1 @@
-[{"login":"lucas","name":"lucas","cpf":"000","email":"lucas","password":"000","isAdmin":false,"tickets":[],"eventFeedbacks":[]}]
+[{"login":"admin","name":"admin","cpf":"admin","email":"admin","password":"admin","isAdmin":true,"tickets":[],"eventFeedbacks":[]},{"login":"uele","name":"uele","cpf":"uele","email":"uele","password":"uele","isAdmin":false,"tickets":[],"eventFeedbacks":[]}]

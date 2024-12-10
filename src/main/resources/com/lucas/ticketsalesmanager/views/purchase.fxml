@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="370.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-      <VBox layoutX="133.0" prefHeight="150.0" prefWidth="130.0" />
-      <TextArea layoutY="150.0" prefHeight="66.0" prefWidth="260.0" />
-      <VBox layoutX="163.0" layoutY="216.0" prefHeight="150.0" prefWidth="100.0">
+<BorderPane prefHeight="251.0" prefWidth="374.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.PurchaseController">
+   <center>
+      <VBox alignment="CENTER" prefHeight="145.0" prefWidth="350.0" spacing="10">
          <children>
-            <Label prefHeight="18.0" prefWidth="50.0" text="Compra" />
+            <Label fx:id="eventNameLabel" text="Nome do Evento" />
+            <Label fx:id="eventDateLabel" text="Data do Evento" />
+            <Label fx:id="eventDescriptionLabel" text="Descrição do Evento" wrapText="true" />
+            <Separator prefWidth="200.0" />
+            <HBox>
+               <children>
+                  <Label prefHeight="20.0" prefWidth="206.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Método de pagamento" />
+                  <ChoiceBox fx:id="paymentMethodChoiceBox" prefHeight="27.0" prefWidth="146.0" />
+               </children>
+            </HBox>
          </children>
       </VBox>
-      <GridPane layoutX="7.0" layoutY="216.0" prefHeight="150.0" prefWidth="150.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-      </GridPane>
-      <VBox layoutX="263.0" prefHeight="370.0" prefWidth="204.0">
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="41.0" prefWidth="354.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="24.0" prefWidth="203.0" text="Confirmaçao da Compra" />
+            <Button fx:id="btnPurchase" prefWidth="150.0" style="-fx-font-size: 16px; -fx-background-color: #4CAF50; -fx-text-fill: white;" text="Comprar" />
          </children>
-      </VBox>
-   </children>
-</AnchorPane>
+      </HBox>
+   </bottom>
+   <top>
+      <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Detalhes do Evento" BorderPane.alignment="CENTER" />
+   </top>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>

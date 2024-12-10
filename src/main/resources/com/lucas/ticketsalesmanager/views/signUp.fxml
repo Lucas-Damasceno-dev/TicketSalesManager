@@ -10,10 +10,10 @@
 
 <VBox alignment="TOP_CENTER" spacing="5.0" styleClass="login-signup-container" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lucas.ticketsalesmanager.views.controllers.scenes.SignUpController">
    <children>
-      <Label styleClass="form-title" text="Cadastro de Conta" />
+      <Label fx:id="lblAccountRegistration" styleClass="form-title" text="Cadastro de Conta" />
       <HBox alignment="CENTER">
          <children>
-            <Label text="Nome:" />
+            <Label fx:id="lblName" text="Nome:" />
             <TextField fx:id="nameField" promptText="Digite seu nome" styleClass="input-field" />
          </children>
       </HBox>
@@ -25,7 +25,7 @@
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <Label text="NickName:" />
+            <Label fx:id="lblUserName" text="Usuário" />
             <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" styleClass="input-field" />
          </children>
       </HBox>
@@ -37,21 +37,21 @@
       </HBox>
       <HBox alignment="CENTER" prefWidth="350.0">
          <children>
-            <Label text="Senha:" />
+            <Label fx:id="lblPassword" text="Senha:" />
             <PasswordField fx:id="passwordField" promptText="Digite sua senha" styleClass="input-field" />
          </children>
       </HBox>
       <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefWidth="350.0">
          <children>
-            <Label text="Confirmaçao de Senha:" />
+            <Label fx:id="lblPassConfirmation" text="Confirmaçao de Senha:" />
             <PasswordField fx:id="confirmPasswordField" onKeyPressed="#confirmPasswordOnKeyPressed" promptText="Confirme sua senha" styleClass="input-field" />
          </children>
       </HBox>
       <Button fx:id="btnSignUp" onAction="#onSignUp" styleClass="submit-button" text="Cadastrar" />
       <HBox alignment="CENTER">
          <children>
-            <Label styleClass="form-footer" text="Já tem uma conta?" />
-            <Hyperlink onAction="#onBackToLogin" text="Login aqui!" />
+            <Label fx:id="lblAlreadyHaveAccount" styleClass="form-footer" text="Já tem uma conta?" />
+            <Hyperlink fx:id="lblLoginHere" onAction="#onBackToLogin" text="Login aqui!" />
          </children>
       </HBox>
    </children>

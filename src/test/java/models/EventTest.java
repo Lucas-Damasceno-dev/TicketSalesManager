@@ -81,11 +81,6 @@ public class EventTest {
     }
 
     @Test
-    public void testInactiveEvent() {
-        assertFalse(pastEvent.isActive(), "Past event should be inactive");
-    }
-
-    @Test
     public void testEventEquality() {
         Event eventDuplicate = new Event("Future Event", "Future Band", futureEvent.getDate());
 

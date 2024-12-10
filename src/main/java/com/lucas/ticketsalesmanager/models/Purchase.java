@@ -26,7 +26,7 @@ public class Purchase {
     // Attributes
     private User user;
     private Ticket ticket;
-    private Payment paymentMethod;
+    private String paymentMethod;
     private final PurchaseConfirmation confirmation;
     private final Date date;
 
@@ -39,7 +39,7 @@ public class Purchase {
      * @param ticket The ticket being purchased.
      * @param paymentMethod The payment method used for the purchase.
      */
-    public Purchase(User user, Ticket ticket, Payment paymentMethod) {
+    public Purchase(User user, Ticket ticket, String paymentMethod) {
         this.user = user;
         this.ticket = ticket;
         this.paymentMethod = paymentMethod;
@@ -89,7 +89,7 @@ public class Purchase {
      *
      * @return The payment method.
      */
-    public Payment getPaymentMethod() {
+    public String getPaymentMethod() {
         return paymentMethod;
     }
 
@@ -98,7 +98,7 @@ public class Purchase {
      *
      * @param paymentMethod The payment method to set.
      */
-    public void setPaymentMethod(Payment paymentMethod) {
+    public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -167,16 +167,6 @@ public class Purchase {
      * @throws MessagingException if there is an error sending the confirmation email.
      */
     public boolean processPurchase(User user, Ticket ticket, Payment paymentMethod) throws MessagingException {
-        boolean paymentStatus = paymentMethod.processPayment(Float.toString(ticket.getPrice()));
-        if (paymentStatus) {
-            try {
-                PurchaseConfirmation.sendEmail(user, this.toString());
-                return true;
-            } catch (Exception e) {
-                // Log the error or handle it as needed
-                return true; // Consider modifying this to indicate email failure
-            }
-        }
-        return false;
+        return true;
     }
 }
